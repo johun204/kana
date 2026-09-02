@@ -6,7 +6,7 @@
 <meta name="theme-color" content="#6c5ce7">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon.svg">
-<title>가나 7일 집중 코스</title>
+<title>가나 집중 학습</title>
 <style>
 :root{
   --jp:"Hiragino Kaku Gothic ProN","Yu Gothic",Meiryo,"Noto Sans JP","Noto Sans CJK JP",sans-serif;
@@ -17,27 +17,30 @@ body{margin:0;font-family:system-ui,"Malgun Gothic",sans-serif;background:#f4f5f
   max-width:480px;margin:0 auto;padding-bottom:72px}
 header{background:var(--pp);color:#fff;padding:12px 16px;position:sticky;top:0;z-index:5}
 header h1{margin:0;font-size:16px}
-header .sub{font-size:11.5px;opacity:.92;margin-top:3px;line-height:1.5}
+header .sub{font-size:11.5px;opacity:.92;margin-top:3px;line-height:1.55}
+header .sub b{color:#ffe08a}
 .bar{display:flex;gap:8px;padding:10px 16px;flex-wrap:wrap;align-items:center}
-.bar select{padding:6px 8px;border-radius:8px;border:1px solid #ccd;background:#fff;font-size:13px;max-width:100%}
-.bar #stat{margin-left:auto;font-size:12px;color:#555}
+.pbar{flex:1 0 100%;height:6px;background:#e2e4f0;border-radius:3px;overflow:hidden}
+.pfill{height:100%;background:var(--pp);width:0;transition:width .3s}
+.bar #stat{font-size:12px;color:#555}
+.bar #streak{margin-left:auto;font-size:12px}
 section{display:none;padding:8px 16px 24px}
 section.active{display:block}
 button{font-family:inherit;cursor:pointer}
 .card{background:#fff;border-radius:16px;padding:18px;box-shadow:0 2px 10px rgba(0,0,0,.05)}
-.intro{background:#eef0fd;border-left:3px solid var(--pp);border-radius:8px;padding:9px 11px;
-  font-size:12.5px;line-height:1.65;margin-bottom:14px;color:#3a3f52}
-.intro b{color:var(--pp)}
 .big{display:flex;gap:16px;justify-content:center;align-items:baseline}
 .big span{font-family:var(--jp);font-size:92px;line-height:1}
 .big .kk{color:#8a8fb0}
-.rom{text-align:center;font-size:20px;margin:10px 0}
+.rom{text-align:center;font-size:20px;margin:10px 0 2px}
 .rom b{color:var(--pp);font-size:24px}
+.lsc{text-align:center;color:var(--pp);font-size:13px;margin-bottom:8px}
+.nu{background:#ffe08a;color:#7a5b00;font-size:11px;font-weight:700;padding:1px 6px;border-radius:6px;vertical-align:middle;margin-right:6px}
 .mn{font-size:14px;line-height:1.6;background:#f6f6fd;border-radius:10px;padding:10px 12px;margin:10px 0}
 .mn .tip{color:#555}
 .mn b{color:var(--pp)}
 .ex{font-size:14px;line-height:1.9}
 .ex b{font-family:var(--jp);font-size:19px}
+.ex .tip{color:#888}
 .mark{display:flex;gap:10px;margin-top:14px}
 .mark button{flex:1;padding:12px;border:0;border-radius:10px;font-size:15px}
 #lkno{background:#e3fbe8;color:#1a7a33}
@@ -47,9 +50,10 @@ button{font-family:inherit;cursor:pointer}
 .grid{display:grid;grid-template-columns:repeat(8,1fr);gap:6px;margin-top:16px}
 .grid span{font-family:var(--jp);font-size:19px;text-align:center;padding:6px 0;border-radius:8px;
   background:#fff;border:1px solid #e2e4f0;color:#999}
+.grid span.sw{background:#fff7e6;border-color:#f0d9a8;color:#b07d18}
 .grid span.kn{background:#e3fbe8;border-color:#a9e6b8;color:#1a7a33}
 .grid span.cur{outline:2px solid var(--pp)}
-.gridnote{margin-top:14px;font-size:12px;color:#888;text-align:center}
+.gridleg{margin-top:10px;font-size:11px;color:#999;text-align:center}
 .label{text-align:center;font-size:15px;color:#555;margin:6px 0}
 .prompt{text-align:center;font-size:34px;margin:4px 0}
 .prompt small{font-size:16px;color:#888}
@@ -69,8 +73,7 @@ button{font-family:inherit;cursor:pointer}
 .qq{font-family:var(--jp);font-size:82px;text-align:center;margin:24px 0}
 .qq.small{font-family:inherit;font-size:32px}
 .qopts{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.qopts button{padding:16px;font-size:18px;border:1px solid #ccd;background:#fff;border-radius:12px;
-  font-family:var(--jp)}
+.qopts button{padding:16px;font-size:18px;border:1px solid #ccd;background:#fff;border-radius:12px;font-family:var(--jp)}
 .qopts button.ok{background:#e3fbe8;border-color:#1a7a33}
 .qopts button.no{background:#ffe9e9;border-color:#b23}
 .qmeta{text-align:center;color:#666;font-size:13px;margin-top:4px}
@@ -83,37 +86,21 @@ nav button.on{color:var(--pp);font-weight:700}
 </head>
 <body>
 <header>
-  <h1>가나 7일 집중 코스 <button class="tinybtn" id="reset">기록 초기화</button></h1>
-  <div class="sub">Day 1~7을 순서대로. 각 Day에서 <b>보기 → 따라쓰기 → 백지 → 퀴즈</b>를 한 바퀴 = 1회독. 약한 글자와 헷갈리는 짝이 더 자주 나옵니다.</div>
+  <h1>가나 집중 학습 <button class="tinybtn" id="reset">기록 초기화</button></h1>
+  <div class="sub">접속할 때마다 <b>약한 글자·새 글자</b>를 자동으로 골라 드립니다. 5분이든 20분이든 <b>원하는 만큼</b> 계속 누르세요. 익힐수록 새 글자가 조금씩 열립니다.</div>
 </header>
 
 <div class="bar">
-  <select id="rangeSel">
-    <optgroup label="7일 코스 (누적)">
-      <option value="d1">Day 1 · 히라 あ·か·さ행</option>
-      <option value="d2">Day 2 · 히라 た·な·は행</option>
-      <option value="d3">Day 3 · 히라 ま행~ん</option>
-      <option value="d4">Day 4 · 히라 탁음·반탁·요음</option>
-      <option value="d5">Day 5 · 가타 ア·カ·サ행</option>
-      <option value="d6">Day 6 · 가타 タ·ナ·ハ행</option>
-      <option value="d7">Day 7 · 가타 マ행~ン + 탁음·요음</option>
-    </optgroup>
-    <optgroup label="자유 범위">
-      <option value="hira">히라가나 46</option>
-      <option value="kata">가타카나 46</option>
-      <option value="daku">탁음·반탁음 (양쪽)</option>
-      <option value="youon">요음 (양쪽)</option>
-      <option value="all">전체 음절 (양쪽)</option>
-    </optgroup>
-  </select>
+  <div class="pbar"><div class="pfill" id="pfill"></div></div>
   <span id="stat"></span>
+  <span id="streak"></span>
 </div>
 
 <section id="view-learn" class="active">
   <div class="card">
-    <div class="intro" id="lintro"></div>
     <div class="big"><span class="hh" id="lhh"></span><span class="kk" id="lkk"></span></div>
     <div class="rom" id="lrom"></div>
+    <div class="lsc" id="lsc"></div>
     <div class="mn" id="lmn"></div>
     <div class="ex" id="lex"></div>
     <div class="mark">
@@ -121,10 +108,11 @@ nav button.on{color:var(--pp);font-weight:700}
       <button id="lfgt">✗ 다시</button>
     </div>
     <div class="nav2">
-      <button id="lprv">← 이전</button><span id="lpos"></span><button id="lnxt">다음 →</button>
+      <button id="lprv">← 이전</button>
+      <button id="lnxt">다음 (채점 안 함) →</button>
     </div>
     <div class="grid" id="lgrid"></div>
-    <div class="gridnote" id="lgridnote"></div>
+    <div class="gridleg">지금 열린 글자 · <span style="color:#b07d18">노랑=학습 중</span> · <span style="color:#1a7a33">초록=익힘</span></div>
   </div>
 </section>
 
@@ -175,230 +163,236 @@ nav button.on{color:var(--pp);font-weight:700}
 <script>
 const JP='"Hiragino Kaku Gothic ProN","Yu Gothic",Meiryo,"Noto Sans JP",sans-serif';
 
-// 청음 46 — h|k|romaji|korean|히라연상|가타연상|히라예|뜻|가타예|뜻
+// 청음 46 — h|k|romaji|korean|히라연상|가타연상|히라예|한글발음|뜻|가타예|한글발음|뜻
 const GOJUON=`
-あ|ア|a|아|알파벳 A에 획 하나 더 — 입 크게 '아!'|각진 A, 도끼 모양 '아'|あめ|비|アイス|아이스크림
-い|イ|i|이|나란한 앞니 두 개 '이~'|사람이 기대 선 모양 '이'|いぬ|개|インク|잉크
-う|ウ|u|우|고개 숙여 '우~' 하고 인사|집 지붕(宀) 아래 '우'|うみ|바다|ウール|양모
-え|エ|e|에|목을 쭉 뺀 새가 '에?' 하고 돌아봄|공사장 철골, 한자 工 '에'|えき|역|エアコン|에어컨
-お|オ|o|오|'あ'의 형제 — 낚싯바늘에 걸린 오징어|十에 삐침, 가지에 걸린 '오'|おかね|돈|オレンジ|오렌지
-か|カ|ka|카|칼(か)로 내리치는 모양, 점은 칼자국|히라가나 か에서 점 뺀 칼|かさ|우산|カメラ|카메라
-き|キ|ki|키|열쇠(key) 두 개 겹친 모양|각진 열쇠, き에서 곡선 뺌|きって|우표|キロ|킬로
-く|ク|ku|쿠|새 부리로 '꾹' 쪼는 '<' 모양|입 벌린 낫 모양 '쿠'|くつ|신발|クラス|반
-け|ケ|ke|케|케이크 자르는 칼과 접시|각진 케이크 칼 '케'|けさ|오늘 아침|ケーキ|케이크
-こ|コ|ko|코|입에서 나오는 '코'골이 두 줄|입 벌린 상자 'ㄷ' — 코|こえ|목소리|コーヒー|커피
-さ|サ|sa|사|'き'에서 획 뺀 모양, 낚시에 걸린 물고기|각진 さ, 갈퀴 '사'|さかな|물고기|サラダ|샐러드
-し|シ|shi|시|낚싯줄이 아래로 쭉 — 갈고리|왼쪽서 위로 두 점+삐침(미소). ツ와 구분: 옆으로|しんぶん|신문|シャツ|셔츠
-す|ス|su|스|빙글 도는 소용돌이에 국수 감기|미끄럼틀 타고 '수~'|すし|초밥|スプーン|숟가락
-せ|セ|se|세|한자 世(세상 세)에서 온 갈퀴 모양|각진 せ, 갈퀴 '세'|せんせい|선생님|セーター|스웨터
-そ|ソ|so|소|지그재그로 꿰맨 '솔기'|점 하나+삐침, 아래로 '소'. ン과 구분: 세로로|そら|하늘|ソース|소스
-た|タ|ta|타|논밭(田)에서 온 글자 — 왼쪽 t + 점 두 개|한자 夕(저녁 석), 칼에 점 '타'|たべもの|음식|タオル|수건
-ち|チ|chi|치|숫자 5를 뒤집은 지렁이 모양|한자 千(일천 천), 손 흔들며 '치'|ちかてつ|지하철|チーズ|치즈
-つ|ツ|tsu|츠|파도가 '츠~' 밀려오는 곡선|위에 두 점 나란히+삐침. シ와 구분: 위로|つくえ|책상|ツアー|투어
-て|テ|te|테|한자 手(손 수) — 손 하나 쭉 뻗음|한자 天 비슷, 안테나 '테'|てがみ|편지|テスト|시험
-と|ト|to|토|못(と)에 실 한 가닥 걸린 모양|점 하나 찍은 막대, 못 '토'|とけい|시계|トマト|토마토
-な|ナ|na|나|십자가에 매듭 — 무릎 꿇고 기도|十에 삐침, 칼 '나'|なつ|여름|ナイフ|나이프
-に|ニ|ni|니|왼쪽 막대 + 고리 두 개, 숫자 2(に)|가로줄 두 개, 숫자 2 '니'|にく|고기|ニュース|뉴스
-ぬ|ヌ|nu|누|국수(누들)를 젓가락으로 돌돌 — 꼬리 있음(め와 구분)|한자 又에 삐침, 국수 '누'|いぬ|개|ヌードル|누들
-ね|ネ|ne|네|고양이(ねこ) 꼬리 말린 모양 — ね·れ·わ 세 자매|복잡한 십자, 제사상 '네'|ねこ|고양이|ネクタイ|넥타이
-の|ノ|no|노|동그랗게 도는 'no' 사인, 소용돌이|삐침 하나, 슬래시 '노'|のみもの|음료|ノート|공책
-は|ハ|ha|하|'하!' 웃는 옆얼굴 — 막대 + 눈. 조사일 땐 '와'|여덟 八, 벌어진 '하하' 웃음|はな|꽃|ハム|햄
-ひ|ヒ|hi|히|웃는 입꼬리 옆모습 '히'|숟가락, 한자 匕(비수 비) '히'|ひこうき|비행기|ヒーロー|히어로
-ふ|フ|fu|후|후지산 실루엣, '후~' 부는 바람|갈고리 하나, '후~' 부는 입|ふゆ|겨울|フォーク|포크
-へ|ヘ|he|헤|산 능선 — 방귀(へ) 소리 '헤~'|히라가나 へ와 똑같음, 산 능선|へや|방|ヘア|헤어
-ほ|ホ|ho|호|'は'에 획 하나 더 — 돛단배의 돛|한자 木(나무 목)에 점, 돛대 '호'|ほし|별|ホテル|호텔
-ま|マ|ma|마|실타래 감는 모양 — 엄마가 뜨개질|삼각 매듭, 마스크 '마'|まど|창문|マスク|마스크
-み|ミ|mi|미|숫자 3처럼 구불구불 '미'|가로줄 세 개, 숫자 3 '미'|みず|물|ミルク|우유
-む|ム|mu|무|소가 '무~' 우는 얼굴, 꼬리 달린 3|입 삐죽 내민 소 '무~'|むし|벌레|ムード|무드
-め|メ|me|메|한자 目(눈 목) — ぬ와 달리 꼬리 없음|가위표 X, 눈(目) '메'|めがね|안경|メール|이메일
-も|モ|mo|모|'し'에 가로줄 두 개 — 낚싯바늘에 지렁이|한자 毛(터럭 모), 갈퀴에 가로 '모'|もり|숲|モデル|모델
-や|ヤ|ya|야|야구 방망이 휘두르는 모양|화살촉 모양 '야'|やま|산|タイヤ|타이어
-ゆ|ユ|yu|유|물고기가 구부러진 몸통으로 헤엄|그릇 모양, U턴 '유'|ゆき|눈(雪)|ユーモア|유머
-よ|ヨ|yo|요|낚싯바늘에 매듭 — 숫자 4 비슷|빗 모양 'ㅌ', 뒤집힌 3 '요'|よる|밤|ヨガ|요가
-ら|ラ|ra|라|'5'를 흘려 쓴 모양 — 라디오 안테나|위 가로줄+갈고리, 라디오 '라'|らいねん|내년|ラーメン|라멘
-り|リ|ri|리|두 획 나란히 — 리본 두 가닥|두 획 나란, 사람 옆모습 '리'|りんご|사과|リボン|리본
-る|ル|ru|루|빙글 돌아 고리 매듭 — 루프(loop)|두 다리로 서서 '루'|はる|봄|ルール|규칙
-れ|レ|re|레|ね·れ·わ 자매 — 꼬리가 밖으로 튕김|체크 표시 ✓, 갈고리 '레'|はれ|맑음|レモン|레몬
-ろ|ロ|ro|로|'る'에서 고리 뺀 각진 소용돌이|네모난 입, 상자 '로'|ふろ|목욕|ロボット|로봇
-わ|ワ|wa|와|ね·れ·わ 자매 — 고리 없이 부드럽게|입 벌린 상자(ク 비슷), 아래 각 '와'|わたし|나|ワイン|와인
-を|ヲ|wo|오|조사 '~을/를' 전용 — 갈퀴에 매듭|ラ에 가로줄 하나 — 거의 안 씀|ほんをよむ|책을 읽다|—|—
-ん|ン|n|ㄴ/ㅁ/ㅇ|받침 소리 — 흘려 쓴 h 또는 숫자 6. 어두에 안 옴|삐침+아래에서 위로 점 — 받침 'ㄴ'. ソ와 구분: 밑에서 위로|ほん|책|パン|빵
-`.trim().split('\n').map(l=>{const p=l.split('|');return{h:p[0],k:p[1],r:p[2],ko:p[3],hm:p[4],km:p[5],he:p[6],hek:p[7],ke:p[8],kek:p[9]};});
+あ|ア|a|아|알파벳 A에 획 하나 더 — 입 크게 '아!'|각진 A, 도끼 모양 '아'|あめ|아메|비|アイス|아이스|아이스크림
+い|イ|i|이|나란한 앞니 두 개 '이~'|사람이 기대 선 모양 '이'|いぬ|이누|개|インク|잉쿠|잉크
+う|ウ|u|우|고개 숙여 '우~' 하고 인사|집 지붕(宀) 아래 '우'|うみ|우미|바다|ウール|우루|양모
+え|エ|e|에|목을 쭉 뺀 새가 '에?' 하고 돌아봄|공사장 철골, 한자 工 '에'|えき|에키|역|エアコン|에아콘|에어컨
+お|オ|o|오|'あ'의 형제 — 낚싯바늘에 걸린 오징어|十에 삐침, 가지에 걸린 '오'|おかね|오카네|돈|オレンジ|오렌지|오렌지
+か|カ|ka|카|칼(か)로 내리치는 모양, 점은 칼자국|히라가나 か에서 점 뺀 칼|かさ|카사|우산|カメラ|카메라|카메라
+き|キ|ki|키|열쇠(key) 두 개 겹친 모양|각진 열쇠, き에서 곡선 뺌|きって|킷테|우표|キロ|키로|킬로
+く|ク|ku|쿠|새 부리로 '꾹' 쪼는 '<' 모양|입 벌린 낫 모양 '쿠'|くつ|쿠츠|신발|クラス|쿠라스|반
+け|ケ|ke|케|케이크 자르는 칼과 접시|각진 케이크 칼 '케'|けさ|케사|오늘 아침|ケーキ|케키|케이크
+こ|コ|ko|코|입에서 나오는 '코'골이 두 줄|입 벌린 상자 'ㄷ' — 코|こえ|코에|목소리|コーヒー|코히|커피
+さ|サ|sa|사|'き'에서 획 뺀 모양, 낚시에 걸린 물고기|각진 さ, 갈퀴 '사'|さかな|사카나|물고기|サラダ|사라다|샐러드
+し|シ|shi|시|낚싯줄이 아래로 쭉 — 갈고리|왼쪽서 위로 두 점+삐침(미소). ツ와 구분: 옆으로|しんぶん|심분|신문|シャツ|샤츠|셔츠
+す|ス|su|스|빙글 도는 소용돌이에 국수 감기|미끄럼틀 타고 '수~'|すし|스시|초밥|スプーン|스푼|숟가락
+せ|セ|se|세|한자 世(세상 세)에서 온 갈퀴 모양|각진 せ, 갈퀴 '세'|せんせい|센세이|선생님|セーター|세타|스웨터
+そ|ソ|so|소|지그재그로 꿰맨 '솔기'|점 하나+삐침, 아래로 '소'. ン과 구분: 세로로|そら|소라|하늘|ソース|소스|소스
+た|タ|ta|타|논밭(田)에서 온 글자 — 왼쪽 t + 점 두 개|한자 夕(저녁 석), 칼에 점 '타'|たべもの|타베모노|음식|タオル|타오루|수건
+ち|チ|chi|치|숫자 5를 뒤집은 지렁이 모양|한자 千(일천 천), 손 흔들며 '치'|ちかてつ|치카테츠|지하철|チーズ|치즈|치즈
+つ|ツ|tsu|츠|파도가 '츠~' 밀려오는 곡선|위에 두 점 나란히+삐침. シ와 구분: 위로|つくえ|츠쿠에|책상|ツアー|츠아|투어
+て|テ|te|테|한자 手(손 수) — 손 하나 쭉 뻗음|한자 天 비슷, 안테나 '테'|てがみ|테가미|편지|テスト|테스토|시험
+と|ト|to|토|못(と)에 실 한 가닥 걸린 모양|점 하나 찍은 막대, 못 '토'|とけい|토케이|시계|トマト|토마토|토마토
+な|ナ|na|나|십자가에 매듭 — 무릎 꿇고 기도|十에 삐침, 칼 '나'|なつ|나츠|여름|ナイフ|나이후|나이프
+に|ニ|ni|니|왼쪽 막대 + 고리 두 개, 숫자 2(に)|가로줄 두 개, 숫자 2 '니'|にく|니쿠|고기|ニュース|뉴스|뉴스
+ぬ|ヌ|nu|누|국수(누들)를 젓가락으로 돌돌 — 꼬리 있음(め와 구분)|한자 又에 삐침, 국수 '누'|いぬ|이누|개|ヌードル|누도루|누들
+ね|ネ|ne|네|고양이(ねこ) 꼬리 말린 모양 — ね·れ·わ 세 자매|복잡한 십자, 제사상 '네'|ねこ|네코|고양이|ネクタイ|네쿠타이|넥타이
+の|ノ|no|노|동그랗게 도는 'no' 사인, 소용돌이|삐침 하나, 슬래시 '노'|のみもの|노미모노|음료|ノート|노토|공책
+は|ハ|ha|하|'하!' 웃는 옆얼굴 — 막대 + 눈. 조사일 땐 '와'|여덟 八, 벌어진 '하하' 웃음|はな|하나|꽃|ハム|하무|햄
+ひ|ヒ|hi|히|웃는 입꼬리 옆모습 '히'|숟가락, 한자 匕(비수 비) '히'|ひこうき|히코우키|비행기|ヒーロー|히로|히어로
+ふ|フ|fu|후|후지산 실루엣, '후~' 부는 바람|갈고리 하나, '후~' 부는 입|ふゆ|후유|겨울|フォーク|포크|포크
+へ|ヘ|he|헤|산 능선 — 방귀(へ) 소리 '헤~'|히라가나 へ와 똑같음, 산 능선|へや|헤야|방|ヘア|헤아|헤어
+ほ|ホ|ho|호|'は'에 획 하나 더 — 돛단배의 돛|한자 木(나무 목)에 점, 돛대 '호'|ほし|호시|별|ホテル|호테루|호텔
+ま|マ|ma|마|실타래 감는 모양 — 엄마가 뜨개질|삼각 매듭, 마스크 '마'|まど|마도|창문|マスク|마스쿠|마스크
+み|ミ|mi|미|숫자 3처럼 구불구불 '미'|가로줄 세 개, 숫자 3 '미'|みず|미즈|물|ミルク|미루쿠|우유
+む|ム|mu|무|소가 '무~' 우는 얼굴, 꼬리 달린 3|입 삐죽 내민 소 '무~'|むし|무시|벌레|ムード|무도|무드
+め|メ|me|메|한자 目(눈 목) — ぬ와 달리 꼬리 없음|가위표 X, 눈(目) '메'|めがね|메가네|안경|メール|메루|이메일
+も|モ|mo|모|'し'에 가로줄 두 개 — 낚싯바늘에 지렁이|한자 毛(터럭 모), 갈퀴에 가로 '모'|もり|모리|숲|モデル|모데루|모델
+や|ヤ|ya|야|야구 방망이 휘두르는 모양|화살촉 모양 '야'|やま|야마|산|タイヤ|타이야|타이어
+ゆ|ユ|yu|유|물고기가 구부러진 몸통으로 헤엄|그릇 모양, U턴 '유'|ゆき|유키|눈(雪)|ユーモア|유모아|유머
+よ|ヨ|yo|요|낚싯바늘에 매듭 — 숫자 4 비슷|빗 모양 'ㅌ', 뒤집힌 3 '요'|よる|요루|밤|ヨガ|요가|요가
+ら|ラ|ra|라|'5'를 흘려 쓴 모양 — 라디오 안테나|위 가로줄+갈고리, 라디오 '라'|らいねん|라이넨|내년|ラーメン|라멘|라멘
+り|リ|ri|리|두 획 나란히 — 리본 두 가닥|두 획 나란, 사람 옆모습 '리'|りんご|링고|사과|リボン|리본|리본
+る|ル|ru|루|빙글 돌아 고리 매듭 — 루프(loop)|두 다리로 서서 '루'|はる|하루|봄|ルール|루루|규칙
+れ|レ|re|레|ね·れ·わ 자매 — 꼬리가 밖으로 튕김|체크 표시 ✓, 갈고리 '레'|はれ|하레|맑음|レモン|레몬|레몬
+ろ|ロ|ro|로|'る'에서 고리 뺀 각진 소용돌이|네모난 입, 상자 '로'|ふろ|후로|목욕|ロボット|로봇토|로봇
+わ|ワ|wa|와|ね·れ·わ 자매 — 고리 없이 부드럽게|입 벌린 상자(ク 비슷), 아래 각 '와'|わたし|와타시|나|ワイン|와인|와인
+を|ヲ|wo|오|조사 '~을/를' 전용 — 갈퀴에 매듭|ラ에 가로줄 하나 — 거의 안 씀|ほんをよむ|혼오 요무|책을 읽다|—|—|—
+ん|ン|n|ㄴ/ㅁ/ㅇ|받침 소리 — 흘려 쓴 h 또는 숫자 6. 어두에 안 옴|삐침+아래에서 위로 점 — 받침 'ㄴ'. ソ와 구분: 밑에서 위로|ほん|혼|책|パン|판|빵
+`.trim().split('\n').map(l=>{const p=l.split('|');return{h:p[0],k:p[1],r:p[2],ko:p[3],hm:p[4],km:p[5],he:p[6],heko:p[7],hek:p[8],ke:p[9],keko:p[10],kek:p[11]};});
 
-// 탁음·반탁음 25 — h|k|romaji|korean|히라예|뜻|가타예|뜻
+// 탁음·반탁음 25 — h|k|r|ko|히라예|한글발음|뜻|가타예|한글발음|뜻
 const DAKUTEN=`
-が|ガ|ga|가|がっこう|학교|ガム|껌
-ぎ|ギ|gi|기|かぎ|열쇠|ギター|기타
-ぐ|グ|gu|구|かぐ|가구|グラス|유리컵
-げ|ゲ|ge|게|げんき|기운|ゲーム|게임
-ご|ゴ|go|고|ごはん|밥|ゴリラ|고릴라
-ざ|ザ|za|자|ざっし|잡지|ピザ|피자
-じ|ジ|ji|지|じかん|시간|ジュース|주스
-ず|ズ|zu|즈|みず|물|ズボン|바지
-ぜ|ゼ|ze|제|かぜ|감기|ゼロ|제로
-ぞ|ゾ|zo|조|ぞう|코끼리|ゾーン|구역
-だ|ダ|da|다|からだ|몸|サラダ|샐러드
-ぢ|ヂ|dji|지|はなぢ|코피|—|じ와 같은 소리·거의 안 씀
-づ|ヅ|dzu|즈|つづき|계속|—|ず와 같은 소리·거의 안 씀
-で|デ|de|데|でんわ|전화|デート|데이트
-ど|ド|do|도|こども|아이|ドア|문
-ば|バ|ba|바|ばんごはん|저녁밥|バナナ|바나나
-び|ビ|bi|비|へび|뱀|ビール|맥주
-ぶ|ブ|bu|부|ぶた|돼지|ブログ|블로그
-べ|ベ|be|베|べんきょう|공부|ベッド|침대
-ぼ|ボ|bo|보|ぼうし|모자|ボタン|단추
-ぱ|パ|pa|파|かんぱい|건배|パン|빵
-ぴ|ピ|pi|피|えんぴつ|연필|ピアノ|피아노
-ぷ|プ|pu|푸|てんぷら|튀김|プール|수영장
-ぺ|ペ|pe|페|ぺらぺら|술술|ペン|펜
-ぽ|ポ|po|포|さんぽ|산책|ポスト|우체통
-`.trim().split('\n').map(l=>{const p=l.split('|');return{h:p[0],k:p[1],r:p[2],ko:p[3],hm:'',km:'',he:p[4],hek:p[5],ke:p[6],kek:p[7]};});
+が|ガ|ga|가|がっこう|각코우|학교|ガム|가무|껌
+ぎ|ギ|gi|기|かぎ|카기|열쇠|ギター|기타|기타
+ぐ|グ|gu|구|かぐ|카구|가구|グラス|구라스|유리컵
+げ|ゲ|ge|게|げんき|겐키|기운|ゲーム|게무|게임
+ご|ゴ|go|고|ごはん|고한|밥|ゴリラ|고리라|고릴라
+ざ|ザ|za|자|ざっし|잣시|잡지|ピザ|피자|피자
+じ|ジ|ji|지|じかん|지칸|시간|ジュース|쥬스|주스
+ず|ズ|zu|즈|みず|미즈|물|ズボン|즈본|바지
+ぜ|ゼ|ze|제|かぜ|카제|감기|ゼロ|제로|제로
+ぞ|ゾ|zo|조|ぞう|조우|코끼리|ゾーン|존|구역
+だ|ダ|da|다|からだ|카라다|몸|サラダ|사라다|샐러드
+ぢ|ヂ|dji|지|はなぢ|하나지|코피|—|—|—
+づ|ヅ|dzu|즈|つづき|츠즈키|계속|—|—|—
+で|デ|de|데|でんわ|덴와|전화|デート|데토|데이트
+ど|ド|do|도|こども|코도모|아이|ドア|도아|문
+ば|バ|ba|바|ばんごはん|반고한|저녁밥|バナナ|바나나|바나나
+び|ビ|bi|비|へび|헤비|뱀|ビール|비루|맥주
+ぶ|ブ|bu|부|ぶた|부타|돼지|ブログ|부로구|블로그
+べ|ベ|be|베|べんきょう|벤쿄우|공부|ベッド|벳도|침대
+ぼ|ボ|bo|보|ぼうし|보우시|모자|ボタン|보탄|단추
+ぱ|パ|pa|파|かんぱい|캄파이|건배|パン|판|빵
+ぴ|ピ|pi|피|えんぴつ|엔피츠|연필|ピアノ|피아노|피아노
+ぷ|プ|pu|푸|てんぷら|텐푸라|튀김|プール|푸루|수영장
+ぺ|ペ|pe|페|ぺらぺら|페라페라|술술|ペン|펜|펜
+ぽ|ポ|po|포|さんぽ|삼포|산책|ポスト|포스토|우체통
+`.trim().split('\n').map(l=>{const p=l.split('|');return{h:p[0],k:p[1],r:p[2],ko:p[3],hm:'',km:'',he:p[4],heko:p[5],hek:p[6],ke:p[7],keko:p[8],kek:p[9]};});
 
-// 요음 36 — h|k|romaji|korean|히라예|뜻|가타예|뜻
+// 요음 36 — h|k|r|ko|히라예|한글발음|뜻|가타예|한글발음|뜻
 const YOUON=`
-きゃ|キャ|kya|캬|きゃく|손님|キャンプ|캠프
-きゅ|キュ|kyu|큐|きゅうり|오이|キューブ|큐브
-きょ|キョ|kyo|쿄|きょねん|작년|—|—
-しゃ|シャ|sha|샤|かいしゃ|회사|シャワー|샤워
-しゅ|シュ|shu|슈|しゅくだい|숙제|シュート|슛
-しょ|ショ|sho|쇼|しょくじ|식사|ショップ|가게
-ちゃ|チャ|cha|챠|おちゃ|차(茶)|チャンス|찬스
-ちゅ|チュ|chu|츄|ちゅうい|주의|チューブ|튜브
-ちょ|チョ|cho|쵸|ちょっと|조금|チョコ|초콜릿
-にゃ|ニャ|nya|냐|こんにゃく|곤약|—|—
-にゅ|ニュ|nyu|뉴|にゅういん|입원|ニュース|뉴스
-にょ|ニョ|nyo|뇨|にょうぼう|아내|—|—
-ひゃ|ヒャ|hya|햐|ひゃく|100|—|—
-ひゅ|ヒュ|hyu|휴|ひゅうひゅう|쌩쌩|ヒューズ|퓨즈
-ひょ|ヒョ|hyo|효|ひょう|표범|—|—
-みゃ|ミャ|mya|먀|みゃく|맥박|—|—
-みゅ|ミュ|myu|뮤|—|—|ミュージック|뮤직
-みょ|ミョ|myo|묘|みょうじ|성(姓)|—|—
-りゃ|リャ|rya|랴|りゃくご|약어|—|—
-りゅ|リュ|ryu|류|りゅうがく|유학|リュック|배낭
-りょ|リョ|ryo|료|りょこう|여행|—|—
-ぎゃ|ギャ|gya|갸|ぎゃく|반대|ギャング|갱
-ぎゅ|ギュ|gyu|규|ぎゅうにゅう|우유|—|—
-ぎょ|ギョ|gyo|교|きんぎょ|금붕어|ギョーザ|만두
-じゃ|ジャ|ja|쟈|じゃがいも|감자|ジャム|잼
-じゅ|ジュ|ju|쥬|じゅぎょう|수업|ジュース|주스
-じょ|ジョ|jo|죠|じょうず|잘함|ジョギング|조깅
-びゃ|ビャ|bya|뱌|さんびゃく|300|—|—
-びゅ|ビュ|byu|뷰|—|—|ビュッフェ|뷔페
-びょ|ビョ|byo|뵤|びょうき|병|—|—
-ぴゃ|ピャ|pya|퍄|ろっぴゃく|600|—|—
-ぴゅ|ピュ|pyu|퓨|—|—|コンピュータ|컴퓨터
-ぴょ|ピョ|pyo|표|ぴょんぴょん|깡충깡충|—|—
-ぢゃ|ヂャ|dja|쟈|거의 안 씀|じゃ와 동일|—|—
-ぢゅ|ヂュ|dju|쥬|거의 안 씀|じゅ와 동일|—|—
-ぢょ|ヂョ|djo|죠|거의 안 씀|じょ와 동일|—|—
-`.trim().split('\n').map(l=>{const p=l.split('|');return{h:p[0],k:p[1],r:p[2],ko:p[3],hm:'',km:'',he:p[4],hek:p[5],ke:p[6],kek:p[7]};});
+きゃ|キャ|kya|캬|きゃく|캬쿠|손님|キャンプ|캼푸|캠프
+きゅ|キュ|kyu|큐|きゅうり|큐우리|오이|キューブ|큐부|큐브
+きょ|キョ|kyo|쿄|きょねん|쿄넨|작년|—|—|—
+しゃ|シャ|sha|샤|かいしゃ|카이샤|회사|シャワー|샤와|샤워
+しゅ|シュ|shu|슈|しゅくだい|슈쿠다이|숙제|シュート|슈토|슛
+しょ|ショ|sho|쇼|しょくじ|쇼쿠지|식사|ショップ|숏푸|가게
+ちゃ|チャ|cha|챠|おちゃ|오챠|차(茶)|チャンス|챤스|찬스
+ちゅ|チュ|chu|츄|ちゅうい|츄우이|주의|チューブ|츄부|튜브
+ちょ|チョ|cho|쵸|ちょっと|촛토|조금|チョコ|초코|초콜릿
+にゃ|ニャ|nya|냐|こんにゃく|콘냐쿠|곤약|—|—|—
+にゅ|ニュ|nyu|뉴|にゅういん|뉴우인|입원|ニュース|뉴스|뉴스
+にょ|ニョ|nyo|뇨|にょうぼう|뇨우보우|아내|—|—|—
+ひゃ|ヒャ|hya|햐|ひゃく|햐쿠|100|—|—|—
+ひゅ|ヒュ|hyu|휴|ひゅうひゅう|휴우휴우|쌩쌩|ヒューズ|휴즈|퓨즈
+ひょ|ヒョ|hyo|효|ひょう|효우|표범|—|—|—
+みゃ|ミャ|mya|먀|みゃく|먀쿠|맥박|—|—|—
+みゅ|ミュ|myu|뮤|—|—|—|ミュージック|뮤지쿠|뮤직
+みょ|ミョ|myo|묘|みょうじ|묘우지|성(姓)|—|—|—
+りゃ|リャ|rya|랴|りゃくご|랴쿠고|약어|—|—|—
+りゅ|リュ|ryu|류|りゅうがく|류우가쿠|유학|リュック|륫쿠|배낭
+りょ|リョ|ryo|료|りょこう|료코우|여행|—|—|—
+ぎゃ|ギャ|gya|갸|ぎゃく|갸쿠|반대|ギャング|걍구|갱
+ぎゅ|ギュ|gyu|규|ぎゅうにゅう|규우뉴우|우유|—|—|—
+ぎょ|ギョ|gyo|교|きんぎょ|킨교|금붕어|ギョーザ|교자|만두
+じゃ|ジャ|ja|쟈|じゃがいも|쟈가이모|감자|ジャム|쟈무|잼
+じゅ|ジュ|ju|쥬|じゅぎょう|쥬교우|수업|ジュース|쥬스|주스
+じょ|ジョ|jo|죠|じょうず|죠우즈|잘함|ジョギング|조깅구|조깅
+びゃ|ビャ|bya|뱌|さんびゃく|삼뱌쿠|300|—|—|—
+びゅ|ビュ|byu|뷰|—|—|—|ビュッフェ|뷰페|뷔페
+びょ|ビョ|byo|뵤|びょうき|뵤우키|병|—|—|—
+ぴゃ|ピャ|pya|퍄|ろっぴゃく|롯퍄쿠|600|—|—|—
+ぴゅ|ピュ|pyu|퓨|—|—|—|コンピュータ|콘퓨타|컴퓨터
+ぴょ|ピョ|pyo|표|ぴょんぴょん|푱푱|깡충깡충|—|—|—
+ぢゃ|ヂャ|dja|쟈|—|—|발음은 じゃ와 동일 · 실제로는 거의 안 씀|—|—|—
+ぢゅ|ヂュ|dju|쥬|—|—|발음은 じゅ와 동일 · 실제로는 거의 안 씀|—|—|—
+ぢょ|ヂョ|djo|죠|—|—|발음은 じょ와 동일 · 실제로는 거의 안 씀|—|—|—
+`.trim().split('\n').map(l=>{const p=l.split('|');return{h:p[0],k:p[1],r:p[2],ko:p[3],hm:'',km:'',he:p[4],heko:p[5],hek:p[6],ke:p[7],keko:p[8],kek:p[9]};});
 
-/* ---------- 7일 코스 정의 ---------- */
-const G_=(a,b,sc)=>GOJUON.slice(a,b).map(e=>({e,sc}));
-const D_=sc=>DAKUTEN.map(e=>({e,sc}));
-const Y_=sc=>YOUON.map(e=>({e,sc}));
-const DAYS={
-  d1:G_(0,15,'h'),
-  d2:G_(15,30,'h'),
-  d3:G_(30,46,'h'),
-  d4:D_('h').concat(Y_('h')),
-  d5:G_(0,15,'k'),
-  d6:G_(15,30,'k'),
-  d7:G_(30,46,'k').concat(D_('k'),Y_('k')),
-};
-const DAYORDER=['d1','d2','d3','d4','d5','d6','d7'];
-const INTRO={
-  d1:"<b>Day 1 · 히라가나 15자.</b> あ·い·う·え·お 5모음이 모든 글자의 뼈대. か행·さ행은 「자음+모음」 규칙. 오늘은 소리↔모양만 연결하면 성공.",
-  d2:"<b>Day 2 · 히라가나 15자.</b> た행에서 <b>ち(치)·つ(츠)</b>는 규칙을 벗어나니 따로 챙기기. は행의 は는 조사로 쓰이면 「와」.",
-  d3:"<b>Day 3 · 히라가나 16자 → 46자 완성.</b> 헷갈리는 짝: <b>ね·れ·わ</b> / <b>ぬ·め</b>. を는 「~을/를」 전용, ん은 받침.",
-  d4:"<b>Day 4 · 탁음·반탁음·요음 (규칙 위주).</b> 새 모양 없음. ゛=흐린 소리(か→が, さ→ざ, は→ば), ゜=は행→ぱ행. 작은 <b>ゃゅょ</b>는 앞 い단 글자와 합쳐 한 박자: きゃ=「캬」. 히라가나 전체 복습도 함께.",
-  d5:"<b>Day 5 · 가타카나 15자.</b> 소리는 히라가나와 완전히 동일, 모양만 각짐. 카드의 히라가나 연상과 비교하며 외우기. <b>シ·ツ</b>는 획 방향으로 구분.",
-  d6:"<b>Day 6 · 가타카나 15자.</b> 헷갈리는 짝: <b>ソ·ン</b>, <b>ク·ワ</b>. 「획을 어디서 시작하는지」로 구분.",
-  d7:"<b>Day 7 · 가타카나 16자 + 탁음·요음 → 전체 완성.</b> ガ·ギャ 등은 히라가나와 똑같은 규칙. 마지막 전 범위 종합 복습.",
-  hira:"히라가나 46자 자유 연습.",
-  kata:"가타카나 46자 자유 연습.",
-  daku:"탁음·반탁음 — 히라가나·가타카나 양쪽.",
-  youon:"요음(拗音) — 히라가나·가타카나 양쪽. 작은 ゃゅょ 조합.",
-  all:"전체 음절 — 히라·가타 모든 글자.",
-};
+// 학습 순서: 히라 청음 → 가타 청음 → 탁음 히라 → 탁음 가타 → 요음 히라 → 요음 가타
+const CURRICULUM=[].concat(
+  GOJUON.map(e=>({e,sc:'h'})), GOJUON.map(e=>({e,sc:'k'})),
+  DAKUTEN.map(e=>({e,sc:'h'})), DAKUTEN.map(e=>({e,sc:'k'})),
+  YOUON.map(e=>({e,sc:'h'})), YOUON.map(e=>({e,sc:'k'}))
+);
 
 /* ---------- 상태 ---------- */
 let prog=JSON.parse(localStorage.getItem('kana_prog')||'{}');
 const save=()=>localStorage.setItem('kana_prog',JSON.stringify(prog));
-const pk=it=>it.sc+':'+it.e.r;                 // 진도 키 = 스크립트별
-const known=it=>(prog[pk(it)]||0)>=3;
+const pk=it=>it.sc+':'+it.e.r;
 const chOf=it=>it.sc==='h'?it.e.h:it.e.k;
-
-let range='d1', POOL=[], li=0, lastKey=null;
 const $=id=>document.getElementById(id);
 
-function buildPool(){
-  if(range[0]==='d'){
-    const idx=DAYORDER.indexOf(range);
-    POOL=DAYORDER.slice(0,idx+1).flatMap(d=>DAYS[d]);
-  }else{
-    POOL={
-      hira:GOJUON.map(e=>({e,sc:'h'})),
-      kata:GOJUON.map(e=>({e,sc:'k'})),
-      daku:DAKUTEN.flatMap(e=>[{e,sc:'h'},{e,sc:'k'}]),
-      youon:YOUON.flatMap(e=>[{e,sc:'h'},{e,sc:'k'}]),
-      all:GOJUON.concat(DAKUTEN,YOUON).flatMap(e=>[{e,sc:'h'},{e,sc:'k'}]),
-    }[range];
-  }
+const today=new Date().toISOString().slice(0,10);
+let meta=JSON.parse(localStorage.getItem('kana_meta')||'{}');
+if(meta.last!==today){
+  const cont=meta.last && Math.round((new Date(today)-new Date(meta.last))/864e5)===1;
+  meta.streak=cont?(meta.streak||0)+1:1;
+  meta.last=today;
+  localStorage.setItem('kana_meta',JSON.stringify(meta));
 }
-function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]];}return a;}
 
-// 약한 글자 가중: 미학습 ~5, streak1 ~4, streak2 ~3, 익힘 ~1
-function pick(){
-  const w=POOL.map(it=>{const s=prog[pk(it)]||0;return Math.max(1,4-Math.min(s,3))+(s>=3?0:1);});
+let POOL=[], session=0, lastKey=null;
+
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]];}return a;}
+function masteredCount(){return CURRICULUM.reduce((n,it)=>n+((prog[pk(it)]||0)>=3?1:0),0);}
+// 새 글자는 익힌 만큼만 조금씩 열림 (처음 8자)
+function unlockedN(){return Math.min(CURRICULUM.length, 8+masteredCount());}
+function buildPool(){
+  const unlocked=CURRICULUM.slice(0,unlockedN());
+  const weak=unlocked.filter(it=>(prog[pk(it)]||0)<3);
+  const strong=shuffle(unlocked.filter(it=>(prog[pk(it)]||0)>=3)).slice(0,12); // 복습용 랜덤 표본
+  POOL=weak.concat(strong);
+  if(!POOL.length)POOL=unlocked.slice(0,8);
+}
+// 약한 글자·새 글자 우선: 미학습 7, 학습했지만 0 → 5, 1 → 4, 2 → 3, 익힘 → 1
+function pick(tries){
+  tries=tries||0;
+  const w=POOL.map(it=>{const s=prog[pk(it)];
+    if(s===undefined)return 7;
+    return Math.max(1,4-Math.min(s,3))+(s>=3?0:1);});
   let sum=w.reduce((a,b)=>a+b,0), x=Math.random()*sum, out=POOL[POOL.length-1];
   for(let i=0;i<POOL.length;i++){x-=w[i];if(x<=0){out=POOL[i];break;}}
-  if(pk(out)===lastKey&&POOL.length>1)return pick();
+  if(POOL.length>1 && pk(out)===lastKey && tries<8)return pick(tries+1);
   lastKey=pk(out); return out;
 }
+function commit(){save();buildPool();updateStats();}
 
 function updateStats(){
-  const kn=POOL.filter(known).length;
-  $('stat').textContent=kn+' / '+POOL.length+' 익힘';
+  const m=masteredCount(), tot=CURRICULUM.length;
+  $('pfill').style.width=(m/tot*100).toFixed(1)+'%';
+  $('stat').textContent='익힘 '+m+' / '+tot+' · 이번 세션 '+session;
+  $('streak').textContent=meta.streak?('🔥 '+meta.streak+'일'):'';
   if($('view-learn').classList.contains('active'))renderGrid();
 }
 
-/* ---------- 학습 ---------- */
-function renderLearn(){
-  li=(li+POOL.length)%POOL.length;
-  const it=POOL[li], e=it.e;
-  $('lintro').innerHTML=INTRO[range]||'';
+function exHtml(e){
+  let s='';
+  if(e.he && e.he!=='—')
+    s+='ひらがな 예 <b>'+e.he+'</b>'+(e.heko&&e.heko!=='—'?' ('+e.heko+')':'')+' — '+e.hek;
+  else
+    s+='<span class="tip">'+e.hek+'</span>';
+  if(e.ke && e.ke!=='—')
+    s+='<br>カタカナ 예 <b>'+e.ke+'</b>'+(e.keko&&e.keko!=='—'?' ('+e.keko+')':'')+' — '+e.kek;
+  return s;
+}
+
+/* ---------- 학습 (플래시카드 스트림) ---------- */
+let cur=null, hist=[];
+function learnShow(it){
+  cur=it; const e=it.e;
   $('lhh').textContent=e.h; $('lkk').textContent=e.k;
   $('lrom').innerHTML=e.r+' · <b>'+e.ko+'</b>';
+  $('lsc').textContent=(it.sc==='h'?'히라가나':'가타카나');
   const isYou=/[ゃゅょ]/.test(e.h);
-  $('lmn').innerHTML = e.hm
+  const badge=(prog[pk(it)]===undefined)?'<span class="nu">NEW</span>':'';
+  $('lmn').innerHTML=badge+(e.hm
     ? '<div><b>ひらがな</b> '+e.hm+'</div><div><b>カタカナ</b> '+e.km+'</div>'
     : isYou
-      ? '<div class="tip">작은 <b>ゃ·ゅ·ょ</b>는 앞의 い단 글자와 합쳐 <b>한 박자</b>로 발음. きゃ = き+ゃ → 「캬」. 이미 아는 두 글자의 조합이라 새로 외울 모양은 없음.</div>'
-      : '<div class="tip">탁점 ゛ : 맑은소리 → 흐린소리 (か→が, さ→ざ, た→だ, は→ば). 반탁점 ゜ : は행 → ぱ행. 모양은 기본 글자 그대로.</div>';
-  let ex='ひらがな 예 <b>'+e.he+'</b> — '+e.hek;
-  if(e.ke && e.ke!=='—') ex+='<br>カタカナ 예 <b>'+e.ke+'</b> — '+e.kek;
-  $('lex').innerHTML=ex;
-  $('lpos').textContent=(li+1)+' / '+POOL.length+'  ('+(it.sc==='h'?'히라가나':'가타카나')+')';
+      ? '<div class="tip">작은 <b>ゃ·ゅ·ょ</b>는 앞의 い단 글자와 합쳐 <b>한 박자</b>로 발음. きゃ=「캬」. 아는 두 글자의 조합이라 새 모양 없음.</div>'
+      : '<div class="tip">탁점 ゛ : 맑은소리→흐린소리 (か→が, さ→ざ, は→ば). 반탁점 ゜ : は행→ぱ행. 모양은 기본 글자 그대로.</div>');
+  $('lex').innerHTML=exHtml(e);
   renderGrid();
 }
+function learnNext(grade){
+  if(cur){
+    if(grade==='know')prog[pk(cur)]=3;
+    else if(grade==='dunno')prog[pk(cur)]=0;
+    if(grade){session++;commit();}
+    hist.push(cur); if(hist.length>30)hist.shift();
+  }
+  learnShow(pick());
+}
+$('lkno').onclick=()=>learnNext('know');
+$('lfgt').onclick=()=>learnNext('dunno');
+$('lnxt').onclick=()=>learnNext(null);
+$('lprv').onclick=()=>{if(hist.length)learnShow(hist.pop());};
+
 function renderGrid(){
-  const g=$('lgrid'), note=$('lgridnote');
-  if(POOL.length>50){ g.innerHTML=''; note.textContent='총 '+POOL.length+'자 · 익힘 '+POOL.filter(known).length+'자 (그리드 생략)'; return; }
-  note.textContent=''; g.innerHTML='';
-  POOL.forEach((it,i)=>{
+  const g=$('lgrid'); g.innerHTML='';
+  CURRICULUM.slice(0,unlockedN()).forEach(it=>{
     const s=document.createElement('span');
-    s.textContent=chOf(it); if(known(it))s.className='kn';
-    if(i===li)s.classList.add('cur');
-    s.onclick=()=>{li=i;renderLearn();scrollTo(0,0);};
+    s.textContent=chOf(it);
+    const v=prog[pk(it)];
+    if(v>=3)s.className='kn'; else if(v!==undefined)s.className='sw';
+    if(cur&&it===cur)s.classList.add('cur');
+    s.onclick=()=>{if(cur)hist.push(cur);learnShow(it);scrollTo(0,0);};
     g.appendChild(s);
   });
 }
-$('lkno').onclick=()=>{prog[pk(POOL[li])]=3;save();li++;renderLearn();updateStats();};
-$('lfgt').onclick=()=>{prog[pk(POOL[li])]=0;save();renderLearn();updateStats();};
-$('lprv').onclick=()=>{li--;renderLearn();};
-$('lnxt').onclick=()=>{li++;renderLearn();};
 
 /* ---------- 캔버스 ---------- */
 function bindPad(cv){
@@ -447,9 +441,9 @@ function newTrace(){
 $('tclr').onclick=()=>tpad.clear();
 $('tnext').onclick=newTrace;
 $('tdone').onclick=()=>{
-  const key=pk(tItem);
-  if((prog[key]||0)<2)prog[key]=(prog[key]||0)+1; // 따라쓰기는 최대 2까지만
-  save();updateStats();newTrace();
+  const k=pk(tItem);
+  if((prog[k]||0)<2)prog[k]=(prog[k]||0)+1; // 따라쓰기는 최대 2까지만
+  session++; commit(); newTrace();
 };
 
 /* ---------- 백지쓰기 ---------- */
@@ -472,8 +466,9 @@ $('bscore').onclick=()=>{
   $('bg').textContent=bCh;
   $('br').textContent='유사도 '+s+'%   ·   정답 '+bCh;
   $('br').className='result '+(s>=60?'good':'bad');
-  if(s>=60){const key=pk(bItem);prog[key]=Math.min(3,(prog[key]||0)+1);}
-  save();updateStats();
+  const k=pk(bItem);
+  if(s>=60)prog[k]=Math.min(3,(prog[k]||0)+1);
+  session++; commit();
   $('bnext').hidden=false; $('bscore').hidden=true;
 };
 
@@ -493,18 +488,18 @@ function newQuiz(){
   const opts=shuffle([ans,...distractors(ans)]);
   const qq=$('qq'), qo=$('qo');
   qq.classList.toggle('small',modeB);
-  qq.textContent = modeB ? ans.e.ko+' ('+ans.e.r+')' : (sc==='h'?ans.e.h:ans.e.k);
+  qq.textContent=modeB ? ans.e.ko+' ('+ans.e.r+')' : (sc==='h'?ans.e.h:ans.e.k);
   qo.innerHTML=''; qo.dataset.done='';
   opts.forEach(it=>{
     const b=document.createElement('button');
-    b.textContent = modeB ? (sc==='h'?it.e.h:it.e.k) : it.e.ko+' ('+it.e.r+')';
+    b.textContent=modeB ? (sc==='h'?it.e.h:it.e.k) : it.e.ko+' ('+it.e.r+')';
     b.onclick=()=>{
       if(qo.dataset.done)return; qo.dataset.done='1'; qsess.t++;
-      const key=pk(ans);
-      if(it===ans){b.classList.add('ok');qsess.c++;prog[key]=Math.min(3,(prog[key]||0)+1);}
-      else{b.classList.add('no');prog[key]=0;
+      const k=pk(ans);
+      if(it===ans){b.classList.add('ok');qsess.c++;prog[k]=Math.min(3,(prog[k]||0)+1);}
+      else{b.classList.add('no');prog[k]=0;
         [...qo.children].forEach((c,i)=>{if(opts[i]===ans)c.classList.add('ok');});}
-      save();updateStats();
+      session++; commit();
       $('qs').textContent='이번 세션: '+qsess.c+' / '+qsess.t;
       setTimeout(newQuiz,950);
     };
@@ -512,8 +507,8 @@ function newQuiz(){
   });
 }
 
-/* ---------- 라우팅 / 컨트롤 ---------- */
-const views={learn:renderLearn,trace:newTrace,blank:newBlank,quiz:newQuiz};
+/* ---------- 라우팅 ---------- */
+const views={learn:()=>learnShow(cur||pick()),trace:newTrace,blank:newBlank,quiz:newQuiz};
 document.querySelectorAll('nav button').forEach(btn=>{
   btn.onclick=()=>{
     const v=btn.dataset.v;
@@ -523,10 +518,9 @@ document.querySelectorAll('nav button').forEach(btn=>{
   };
 });
 const refreshActive=()=>views[document.querySelector('section.active').id.replace('view-','')]();
-$('rangeSel').onchange=e=>{range=e.target.value;buildPool();li=0;updateStats();refreshActive();};
-$('reset').onclick=()=>{if(confirm('학습 기록을 모두 지울까요?')){prog={};save();updateStats();refreshActive();}};
+$('reset').onclick=()=>{if(confirm('학습 기록을 모두 지울까요?')){prog={};cur=null;hist=[];session=0;commit();refreshActive();}};
 
-buildPool();renderLearn();updateStats();
+buildPool(); learnShow(pick()); updateStats();
 if('serviceWorker'in navigator)navigator.serviceWorker.register('sw.js');
 </script>
 </body>
