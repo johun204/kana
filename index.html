@@ -14,7 +14,7 @@
 }
 *{box-sizing:border-box}
 body{margin:0;font-family:system-ui,"Malgun Gothic",sans-serif;background:#f4f5fb;color:#222;
-  max-width:480px;margin:0 auto;padding-bottom:72px}
+  max-width:480px;margin:0 auto;padding-bottom:64px}
 header{background:var(--pp);color:#fff;padding:12px 16px;position:sticky;top:0;z-index:5}
 header h1{margin:0;font-size:16px}
 header .sub{font-size:11.5px;opacity:.92;margin-top:3px;line-height:1.55}
@@ -28,19 +28,24 @@ section{display:none;padding:8px 16px 24px}
 section.active{display:block}
 button{font-family:inherit;cursor:pointer}
 .card{background:#fff;border-radius:16px;padding:18px;box-shadow:0 2px 10px rgba(0,0,0,.05)}
-.big{display:flex;gap:16px;justify-content:center;align-items:baseline}
-.big span{font-family:var(--jp);font-size:92px;line-height:1}
-.big .kk{color:#8a8fb0}
-.rom{text-align:center;font-size:20px;margin:10px 0 2px}
-.rom b{color:var(--pp);font-size:24px}
+.big{display:flex;gap:30px;justify-content:center;margin-bottom:4px}
+.kunit{display:flex;flex-direction:column;align-items:center;line-height:1}
+.kana{font-family:var(--jp);font-size:86px}
+.kana.kk{color:#8a8fb0}
+.kread{font-size:15px;color:var(--pp);margin-top:6px;font-weight:700}
+.rom{text-align:center;font-size:14px;color:#666;margin:8px 0 2px}
+.rom b{color:var(--pp);font-size:16px}
 .lsc{text-align:center;color:var(--pp);font-size:13px;margin-bottom:8px}
 .nu{background:#ffe08a;color:#7a5b00;font-size:11px;font-weight:700;padding:1px 6px;border-radius:6px;vertical-align:middle;margin-right:6px}
 .mn{font-size:14px;line-height:1.6;background:#f6f6fd;border-radius:10px;padding:10px 12px;margin:10px 0}
 .mn .tip{color:#555}
 .mn b{color:var(--pp)}
-.ex{font-size:14px;line-height:1.9}
-.ex b{font-family:var(--jp);font-size:19px}
-.ex .tip{color:#888}
+.ex{font-size:14px;line-height:2.7}
+.ex .tip{color:#888;line-height:1.6}
+.furi{display:inline-flex;align-items:flex-end;gap:1px;vertical-align:middle;margin:0 2px}
+.fu{display:inline-flex;flex-direction:column;align-items:center;line-height:1.1}
+.fr{font-size:9.5px;color:var(--pp);height:12px}
+.fk{font-family:var(--jp);font-size:20px}
 .mark{display:flex;gap:10px;margin-top:14px}
 .mark button{flex:1;padding:12px;border:0;border-radius:10px;font-size:15px}
 #lkno{background:#e3fbe8;color:#1a7a33}
@@ -54,8 +59,8 @@ button{font-family:inherit;cursor:pointer}
 .grid span.kn{background:#e3fbe8;border-color:#a9e6b8;color:#1a7a33}
 .grid span.cur{outline:2px solid var(--pp)}
 .gridleg{margin-top:10px;font-size:11px;color:#999;text-align:center}
-.label{text-align:center;font-size:15px;color:#555;margin:6px 0}
-.prompt{text-align:center;font-size:34px;margin:4px 0}
+.qmeta{text-align:center;color:#666;font-size:13px;margin-top:2px;min-height:18px}
+.prompt{text-align:center;font-size:34px;margin:10px 0 2px}
 .prompt small{font-size:16px;color:#888}
 .scriptask{text-align:center;color:var(--pp);font-size:14px;margin-bottom:4px}
 .pad{position:relative;width:min(300px,86vw);height:min(300px,86vw);margin:10px auto;
@@ -69,17 +74,16 @@ button{font-family:inherit;cursor:pointer}
 .result{text-align:center;font-size:16px;margin-top:10px;min-height:22px;font-weight:600}
 .result.good{color:#1a7a33}
 .result.bad{color:#b23}
-.hint{text-align:center;color:#999;font-size:12px;margin-top:8px;line-height:1.5}
-.qq{font-family:var(--jp);font-size:82px;text-align:center;margin:24px 0}
-.qq.small{font-family:inherit;font-size:32px}
+.qq{font-family:var(--jp);font-size:80px;text-align:center;margin:20px 0}
+.qq.small{font-family:inherit;font-size:30px}
 .qopts{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .qopts button{padding:16px;font-size:18px;border:1px solid #ccd;background:#fff;border-radius:12px;font-family:var(--jp)}
 .qopts button.ok{background:#e3fbe8;border-color:#1a7a33}
 .qopts button.no{background:#ffe9e9;border-color:#b23}
-.qmeta{text-align:center;color:#666;font-size:13px;margin-top:4px}
+.hint{text-align:center;color:#999;font-size:12px;margin-top:8px;line-height:1.5}
 nav{position:fixed;bottom:0;left:0;right:0;max-width:480px;margin:0 auto;display:flex;
   background:#fff;border-top:1px solid #e0e0ea}
-nav button{flex:1;padding:12px 0;border:0;background:none;font-size:13px;color:#888}
+nav button{flex:1;padding:12px 0;border:0;background:none;font-size:14px;color:#888}
 nav button.on{color:var(--pp);font-weight:700}
 .tinybtn{background:none;border:0;color:#fff;text-decoration:underline;font-size:12px}
 </style>
@@ -87,7 +91,7 @@ nav button.on{color:var(--pp);font-weight:700}
 <body>
 <header>
   <h1>가나 집중 학습 <button class="tinybtn" id="reset">기록 초기화</button></h1>
-  <div class="sub">접속할 때마다 <b>약한 글자·새 글자</b>를 자동으로 골라 드립니다. 5분이든 20분이든 <b>원하는 만큼</b> 계속 누르세요. 익힐수록 새 글자가 조금씩 열립니다.</div>
+  <div class="sub"><b>간격 반복(SRS)</b>으로 복습 시점을 자동 관리 · <b>양방향 인출</b>(모양↔소리) · <b>직접 쓰기</b> · <b>혼동쌍 섞기</b>. 5분이든 20분이든 원하는 만큼.</div>
 </header>
 
 <div class="bar">
@@ -98,7 +102,10 @@ nav button.on{color:var(--pp);font-weight:700}
 
 <section id="view-learn" class="active">
   <div class="card">
-    <div class="big"><span class="hh" id="lhh"></span><span class="kk" id="lkk"></span></div>
+    <div class="big">
+      <div class="kunit"><span class="kana" id="lhh"></span><span class="kread" id="lhr"></span></div>
+      <div class="kunit"><span class="kana kk" id="lkk"></span><span class="kread" id="lkr"></span></div>
+    </div>
     <div class="rom" id="lrom"></div>
     <div class="lsc" id="lsc"></div>
     <div class="mn" id="lmn"></div>
@@ -112,52 +119,37 @@ nav button.on{color:var(--pp);font-weight:700}
       <button id="lnxt">다음 (채점 안 함) →</button>
     </div>
     <div class="grid" id="lgrid"></div>
-    <div class="gridleg">지금 열린 글자 · <span style="color:#b07d18">노랑=학습 중</span> · <span style="color:#1a7a33">초록=익힘</span></div>
+    <div class="gridleg">지금 열린 글자 · <span style="color:#b07d18">노랑=복습 중</span> · <span style="color:#1a7a33">초록=정착</span></div>
   </div>
 </section>
 
-<section id="view-trace">
+<section id="view-practice">
   <div class="card">
-    <div class="label" id="tl"></div>
-    <div class="pad"><div class="guide" id="tg"></div><canvas id="tc" width="300" height="300"></canvas></div>
-    <div class="row">
-      <button id="tclr">지우기</button>
-      <button id="tdone">완료 ✓</button>
-      <button id="tnext">다음 →</button>
+    <div class="qmeta" id="pmeta">이번 세션: 0 / 0</div>
+
+    <div id="pquiz">
+      <div class="qq" id="qq"></div>
+      <div class="qopts" id="qo"></div>
     </div>
-    <div class="hint">회색 밑글자를 따라 손가락(또는 마우스)으로 써 보세요.</div>
-  </div>
-</section>
 
-<section id="view-blank">
-  <div class="card">
-    <div class="label">이 소리를 가나로 써 보세요</div>
-    <div class="prompt" id="bp"></div>
-    <div class="scriptask" id="bsa"></div>
-    <div class="pad"><div class="guide" id="bg"></div><canvas id="bc" width="300" height="300"></canvas></div>
-    <div class="row">
-      <button id="bclr">지우기</button>
-      <button id="bscore">채점</button>
-      <button id="bnext" hidden>다음 →</button>
+    <div id="pwrite" hidden>
+      <div class="prompt" id="bp"></div>
+      <div class="scriptask" id="bsa"></div>
+      <div class="pad"><div class="guide" id="bg"></div><canvas id="bc" width="300" height="300"></canvas></div>
+      <div class="row">
+        <button id="bclr">지우기</button>
+        <button id="bscore">채점</button>
+        <button id="bnext" hidden>다음 →</button>
+      </div>
+      <div class="result" id="br"></div>
+      <div class="hint">소리를 보고 백지에 직접 써 보세요. 60% 이상이면 정답.</div>
     </div>
-    <div class="result" id="br"></div>
-    <div class="hint">채점하면 실제 글자와 겹친 정도(유사도)를 표시합니다. 60% 이상이면 통과.</div>
-  </div>
-</section>
-
-<section id="view-quiz">
-  <div class="card">
-    <div class="qmeta" id="qs">이번 세션: 0 / 0</div>
-    <div class="qq" id="qq"></div>
-    <div class="qopts" id="qo"></div>
   </div>
 </section>
 
 <nav>
   <button data-v="learn" class="on">학습</button>
-  <button data-v="trace">따라쓰기</button>
-  <button data-v="blank">백지쓰기</button>
-  <button data-v="quiz">퀴즈</button>
+  <button data-v="practice">연습</button>
 </nav>
 
 <script>
@@ -289,105 +281,127 @@ const CURRICULUM=[].concat(
   YOUON.map(e=>({e,sc:'h'})), YOUON.map(e=>({e,sc:'k'}))
 );
 
-/* ---------- 상태 ---------- */
-let prog=JSON.parse(localStorage.getItem('kana_prog')||'{}');
-const save=()=>localStorage.setItem('kana_prog',JSON.stringify(prog));
+// 가나 한 글자 → 한글 발음
+const KMAP={};
+[GOJUON,DAKUTEN,YOUON].forEach(A=>A.forEach(e=>{KMAP[e.h]=e.ko;KMAP[e.k]=e.ko;}));
+Object.assign(KMAP,{'ん':'ㄴ','ン':'ㄴ','っ':'ㅅ','ッ':'ㅅ','ー':''});
+const SMALL=/[ゃゅょャュョ]/;
+function furi(w){
+  const out=[];
+  for(const ch of w){
+    if(SMALL.test(ch)&&out.length){const p=out[out.length-1];p.k+=ch;p.ko=KMAP[p.k]||p.ko;}
+    else out.push({k:ch,ko:KMAP[ch]||''});
+  }
+  return out;
+}
+function wordHtml(w){
+  return '<span class="furi">'+furi(w).map(t=>
+    '<span class="fu"><span class="fr">'+t.ko+'</span><span class="fk">'+t.k+'</span></span>').join('')+'</span>';
+}
+function exHtml(e){
+  let s='';
+  if(e.he&&e.he!=='—') s+='예 '+wordHtml(e.he)+' &mdash; '+e.hek;
+  else s+='<span class="tip">'+e.hek+'</span>';
+  if(e.ke&&e.ke!=='—') s+='<br>예 '+wordHtml(e.ke)+' &mdash; '+e.kek;
+  return s;
+}
+
+/* ---------- SRS (라이트너 확장 간격) ---------- */
+const MIN=6e4,HOUR=36e5,DAY=864e5;
+const IVL=[MIN,10*MIN,HOUR,5*HOUR,DAY,3*DAY]; // box 0~5 다음 복습까지
+let DB=JSON.parse(localStorage.getItem('kana_srs')||'null');
+if(!DB){ // 이전 버전(streak) 마이그레이션
+  DB={};
+  const old=JSON.parse(localStorage.getItem('kana_prog')||'{}');
+  for(const k in old){const s=+old[k]||0;DB[k]={b:s>=3?4:s,due:0,seen:1};}
+}
+const save=()=>localStorage.setItem('kana_srs',JSON.stringify(DB));
 const pk=it=>it.sc+':'+it.e.r;
 const chOf=it=>it.sc==='h'?it.e.h:it.e.k;
-const $=id=>document.getElementById(id);
+const boxOf=it=>{const r=DB[pk(it)];return r?r.b:-1;};
+const isMastered=it=>boxOf(it)>=4;
+function gradeKey(key,ok,fast){
+  const r=DB[key]||{b:0,seen:0};
+  r.seen=(r.seen||0)+1;
+  if(ok)r.b=Math.min(5,r.b+(fast===false?0:1)); // 느리게 맞히면 상자 유지(유창성)
+  else r.b=Math.max(0,r.b-2);
+  r.due=Date.now()+IVL[r.b];
+  DB[key]=r;
+}
 
+const $=id=>document.getElementById(id);
 const today=new Date().toISOString().slice(0,10);
 let meta=JSON.parse(localStorage.getItem('kana_meta')||'{}');
 if(meta.last!==today){
-  const cont=meta.last && Math.round((new Date(today)-new Date(meta.last))/864e5)===1;
-  meta.streak=cont?(meta.streak||0)+1:1;
-  meta.last=today;
+  const cont=meta.last && Math.round((new Date(today)-new Date(meta.last))/DAY)===1;
+  meta.streak=cont?(meta.streak||0)+1:1; meta.last=today;
   localStorage.setItem('kana_meta',JSON.stringify(meta));
 }
 
-let POOL=[], session=0, lastKey=null;
-
+let session=0, lastKey=null, qsess={c:0,t:0};
 function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]];}return a;}
-function masteredCount(){return CURRICULUM.reduce((n,it)=>n+((prog[pk(it)]||0)>=3?1:0),0);}
-// 새 글자는 익힌 만큼만 조금씩 열림 (처음 8자)
-function unlockedN(){return Math.min(CURRICULUM.length, 8+masteredCount());}
-function buildPool(){
-  const unlocked=CURRICULUM.slice(0,unlockedN());
-  const weak=unlocked.filter(it=>(prog[pk(it)]||0)<3);
-  const strong=shuffle(unlocked.filter(it=>(prog[pk(it)]||0)>=3)).slice(0,12); // 복습용 랜덤 표본
-  POOL=weak.concat(strong);
-  if(!POOL.length)POOL=unlocked.slice(0,8);
-}
-// 약한 글자·새 글자 우선: 미학습 7, 학습했지만 0 → 5, 1 → 4, 2 → 3, 익힘 → 1
-function pick(tries){
-  tries=tries||0;
-  const w=POOL.map(it=>{const s=prog[pk(it)];
-    if(s===undefined)return 7;
-    return Math.max(1,4-Math.min(s,3))+(s>=3?0:1);});
-  let sum=w.reduce((a,b)=>a+b,0), x=Math.random()*sum, out=POOL[POOL.length-1];
-  for(let i=0;i<POOL.length;i++){x-=w[i];if(x<=0){out=POOL[i];break;}}
-  if(POOL.length>1 && pk(out)===lastKey && tries<8)return pick(tries+1);
-  lastKey=pk(out); return out;
-}
-function commit(){save();buildPool();updateStats();}
+function masteredCount(){return CURRICULUM.reduce((n,it)=>n+(isMastered(it)?1:0),0);}
+function unlockedN(){return Math.min(CURRICULUM.length,8+masteredCount());} // 익힌 만큼만 새 글자 개방
+function unlockedList(){return CURRICULUM.slice(0,unlockedN());}
 
+// 스케줄러: 복습 예정 → 새 글자 → 가장 가까운 예정
+function nextItem(){
+  const now=Date.now(), U=unlockedList();
+  let due=U.filter(it=>{const r=DB[pk(it)];return r&&r.due<=now&&pk(it)!==lastKey;})
+           .sort((a,b)=>DB[pk(a)].due-DB[pk(b)].due);
+  if(due.length){lastKey=pk(due[0]);return due[0];}
+  const fresh=U.find(it=>DB[pk(it)]===undefined);
+  if(fresh){lastKey=pk(fresh);return fresh;}
+  const up=U.filter(it=>pk(it)!==lastKey).sort((a,b)=>(DB[pk(a)].due||0)-(DB[pk(b)].due||0));
+  const it=up[0]||U[0]; lastKey=pk(it); return it;
+}
+function commit(){save();updateStats();}
 function updateStats(){
-  const m=masteredCount(), tot=CURRICULUM.length;
+  const m=masteredCount(),tot=CURRICULUM.length;
   $('pfill').style.width=(m/tot*100).toFixed(1)+'%';
-  $('stat').textContent='익힘 '+m+' / '+tot+' · 이번 세션 '+session;
+  $('stat').textContent='정착 '+m+' / '+tot+' · 이번 세션 '+session;
   $('streak').textContent=meta.streak?('🔥 '+meta.streak+'일'):'';
   if($('view-learn').classList.contains('active'))renderGrid();
 }
 
-function exHtml(e){
-  let s='';
-  if(e.he && e.he!=='—')
-    s+='ひらがな 예 <b>'+e.he+'</b>'+(e.heko&&e.heko!=='—'?' ('+e.heko+')':'')+' — '+e.hek;
-  else
-    s+='<span class="tip">'+e.hek+'</span>';
-  if(e.ke && e.ke!=='—')
-    s+='<br>カタカナ 예 <b>'+e.ke+'</b>'+(e.keko&&e.keko!=='—'?' ('+e.keko+')':'')+' — '+e.kek;
-  return s;
-}
-
 /* ---------- 학습 (플래시카드 스트림) ---------- */
-let cur=null, hist=[];
+let cur=null,hist=[];
 function learnShow(it){
-  cur=it; const e=it.e;
-  $('lhh').textContent=e.h; $('lkk').textContent=e.k;
-  $('lrom').innerHTML=e.r+' · <b>'+e.ko+'</b>';
-  $('lsc').textContent=(it.sc==='h'?'히라가나':'가타카나');
-  const isYou=/[ゃゅょ]/.test(e.h);
-  const badge=(prog[pk(it)]===undefined)?'<span class="nu">NEW</span>':'';
+  cur=it;const e=it.e;
+  $('lhh').textContent=e.h; $('lhr').textContent=KMAP[e.h]||e.ko;
+  $('lkk').textContent=e.k; $('lkr').textContent=KMAP[e.k]||e.ko;
+  $('lrom').innerHTML='로마자 <b>'+e.r+'</b>';
+  $('lsc').textContent=it.sc==='h'?'히라가나':'가타카나';
+  const isY=/[ゃゅょ]/.test(e.h);
+  const badge=(DB[pk(it)]===undefined)?'<span class="nu">NEW</span>':'';
   $('lmn').innerHTML=badge+(e.hm
-    ? '<div><b>ひらがな</b> '+e.hm+'</div><div><b>カタカナ</b> '+e.km+'</div>'
-    : isYou
-      ? '<div class="tip">작은 <b>ゃ·ゅ·ょ</b>는 앞의 い단 글자와 합쳐 <b>한 박자</b>로 발음. きゃ=「캬」. 아는 두 글자의 조합이라 새 모양 없음.</div>'
-      : '<div class="tip">탁점 ゛ : 맑은소리→흐린소리 (か→が, さ→ざ, は→ば). 반탁점 ゜ : は행→ぱ행. 모양은 기본 글자 그대로.</div>');
+    ?'<div><b>ひらがな</b> '+e.hm+'</div><div><b>カタカナ</b> '+e.km+'</div>'
+    :isY
+      ?'<div class="tip">작은 <b>ゃ·ゅ·ょ</b>는 앞의 い단 글자와 합쳐 <b>한 박자</b>로 발음. きゃ=「캬」. 아는 두 글자의 조합.</div>'
+      :'<div class="tip">탁점 ゛ : 맑은소리→흐린소리 (か→が, さ→ざ, は→ば). 반탁점 ゜ : は행→ぱ행.</div>');
   $('lex').innerHTML=exHtml(e);
   renderGrid();
 }
-function learnNext(grade){
+function learnNext(g){
   if(cur){
-    if(grade==='know')prog[pk(cur)]=3;
-    else if(grade==='dunno')prog[pk(cur)]=0;
-    if(grade){session++;commit();}
-    hist.push(cur); if(hist.length>30)hist.shift();
+    if(g==='know')gradeKey(pk(cur),true,true);
+    else if(g==='dunno')gradeKey(pk(cur),false);
+    if(g){session++;commit();}
+    hist.push(cur);if(hist.length>40)hist.shift();
   }
-  learnShow(pick());
+  learnShow(nextItem());
 }
 $('lkno').onclick=()=>learnNext('know');
 $('lfgt').onclick=()=>learnNext('dunno');
 $('lnxt').onclick=()=>learnNext(null);
 $('lprv').onclick=()=>{if(hist.length)learnShow(hist.pop());};
-
 function renderGrid(){
-  const g=$('lgrid'); g.innerHTML='';
-  CURRICULUM.slice(0,unlockedN()).forEach(it=>{
+  const g=$('lgrid');g.innerHTML='';
+  unlockedList().forEach(it=>{
     const s=document.createElement('span');
     s.textContent=chOf(it);
-    const v=prog[pk(it)];
-    if(v>=3)s.className='kn'; else if(v!==undefined)s.className='sw';
+    const b=boxOf(it);
+    if(b>=4)s.className='kn';else if(b>=0)s.className='sw';
     if(cur&&it===cur)s.classList.add('cur');
     s.onclick=()=>{if(cur)hist.push(cur);learnShow(it);scrollTo(0,0);};
     g.appendChild(s);
@@ -409,7 +423,6 @@ function bindPad(cv){
   return{ctx,clear(){ctx.clearRect(0,0,cv.width,cv.height);dirty=false;},get dirty(){return dirty;}};
 }
 // ponytail: 유사도 = 실제 글자 글리프와 손글씨의 픽셀 겹침 F1. 획 순서/모양은 안 봄.
-//           더 정확히 하려면 $1 unistroke recognizer로 교체.
 function similarity(cv,ch){
   const W=cv.width,H=cv.height;
   const off=document.createElement('canvas');off.width=W;off.height=H;
@@ -419,96 +432,80 @@ function similarity(cv,ch){
   o.fillText(ch,W/2,H/2);
   const T=o.getImageData(0,0,W,H).data, U=cv.getContext('2d').getImageData(0,0,W,H).data;
   let inter=0,t=0,u=0;
-  for(let i=3;i<T.length;i+=4){
-    const tp=T[i]>40,up=U[i]>40;
-    if(tp)t++; if(up)u++; if(tp&&up)inter++;
-  }
+  for(let i=3;i<T.length;i+=4){const tp=T[i]>40,up=U[i]>40;if(tp)t++;if(up)u++;if(tp&&up)inter++;}
   if(!t||!u)return 0;
   const cov=inter/t, prec=inter/u;
   return Math.round(100*2*cov*prec/(cov+prec));
 }
 const guideSize=ch=>ch.length>1?'min(140px,40vw)':'';
 
-/* ---------- 따라쓰기 ---------- */
-const tpad=bindPad($('tc'));
-let tItem,tCh;
-function newTrace(){
-  tItem=pick(); tCh=chOf(tItem);
-  $('tg').textContent=tCh; $('tg').style.fontSize=guideSize(tCh);
-  $('tl').textContent=tItem.e.ko+' · '+tItem.e.r+'  ('+(tItem.sc==='h'?'ひらがな':'カタカナ')+')';
-  tpad.clear();
-}
-$('tclr').onclick=()=>tpad.clear();
-$('tnext').onclick=newTrace;
-$('tdone').onclick=()=>{
-  const k=pk(tItem);
-  if((prog[k]||0)<2)prog[k]=(prog[k]||0)+1; // 따라쓰기는 최대 2까지만
-  session++; commit(); newTrace();
-};
-
-/* ---------- 백지쓰기 ---------- */
+/* ---------- 연습 (퀴즈 + 백지쓰기 랜덤 혼합) ---------- */
 const bpad=bindPad($('bc'));
-let bItem,bCh;
-function newBlank(){
-  bItem=pick(); bCh=chOf(bItem);
-  $('bp').innerHTML=bItem.e.ko+' <small>('+bItem.e.r+')</small>';
-  $('bsa').textContent='→ '+(bItem.sc==='h'?'ひらがな':'カタカナ')+'로 쓰기';
-  $('bg').textContent=''; $('bg').style.fontSize=guideSize(bCh);
-  bpad.clear();
-  $('br').textContent=''; $('br').className='result';
-  $('bnext').hidden=true; $('bscore').hidden=false;
-}
-$('bclr').onclick=()=>bpad.clear();
-$('bnext').onclick=newBlank;
-$('bscore').onclick=()=>{
-  if(!bpad.dirty){$('br').textContent='먼저 써 보세요';return;}
-  const s=similarity($('bc'),bCh);
-  $('bg').textContent=bCh;
-  $('br').textContent='유사도 '+s+'%   ·   정답 '+bCh;
-  $('br').className='result '+(s>=60?'good':'bad');
-  const k=pk(bItem);
-  if(s>=60)prog[k]=Math.min(3,(prog[k]||0)+1);
-  session++; commit();
-  $('bnext').hidden=false; $('bscore').hidden=true;
-};
-
-/* ---------- 퀴즈 ---------- */
 const CONFUSE={shi:['tsu'],tsu:['shi'],so:['n'],n:['so'],nu:['me'],me:['nu'],
   wa:['re','ne'],re:['wa','ne'],ne:['re','wa'],ku:['wa'],ru:['ro'],ro:['ru'],
   a:['o'],o:['a'],ha:['ho'],ho:['ha'],ki:['sa'],sa:['ki']};
+let pItem,pCh,qStart=0;
+function nextRound(){
+  pItem=nextItem(); pCh=chOf(pItem);
+  const write=Math.random()<0.4;
+  $('pquiz').hidden=write; $('pwrite').hidden=!write;
+  write?renderWrite():renderQuiz();
+}
 function distractors(ans){
-  const same=POOL.filter(it=>it.sc===ans.sc && it.e.r!==ans.e.r && it.e.ko!==ans.e.ko);
+  const same=unlockedList().filter(it=>it.sc===ans.sc&&it.e.r!==ans.e.r&&it.e.ko!==ans.e.ko);
   const conf=(CONFUSE[ans.e.r]||[]).flatMap(r=>same.filter(it=>it.e.r===r));
   const rest=shuffle(same.filter(it=>!conf.includes(it)));
   return [...conf,...rest].slice(0,3);
 }
-let qsess={c:0,t:0};
-function newQuiz(){
-  const ans=pick(), sc=ans.sc, modeB=Math.random()<.5;
+function renderQuiz(){
+  const ans=pItem,sc=ans.sc,modeB=Math.random()<.5;
   const opts=shuffle([ans,...distractors(ans)]);
-  const qq=$('qq'), qo=$('qo');
+  const qq=$('qq'),qo=$('qo');
   qq.classList.toggle('small',modeB);
-  qq.textContent=modeB ? ans.e.ko+' ('+ans.e.r+')' : (sc==='h'?ans.e.h:ans.e.k);
-  qo.innerHTML=''; qo.dataset.done='';
+  qq.textContent=modeB?ans.e.ko+' ('+ans.e.r+')':(sc==='h'?ans.e.h:ans.e.k);
+  qo.innerHTML='';qo.dataset.done='';qStart=Date.now();
   opts.forEach(it=>{
-    const b=document.createElement('button');
-    b.textContent=modeB ? (sc==='h'?it.e.h:it.e.k) : it.e.ko+' ('+it.e.r+')';
-    b.onclick=()=>{
-      if(qo.dataset.done)return; qo.dataset.done='1'; qsess.t++;
-      const k=pk(ans);
-      if(it===ans){b.classList.add('ok');qsess.c++;prog[k]=Math.min(3,(prog[k]||0)+1);}
-      else{b.classList.add('no');prog[k]=0;
+    const btn=document.createElement('button');
+    btn.textContent=modeB?(sc==='h'?it.e.h:it.e.k):it.e.ko+' ('+it.e.r+')';
+    btn.onclick=()=>{
+      if(qo.dataset.done)return;qo.dataset.done='1';qsess.t++;
+      const ok=it===ans, fast=Date.now()-qStart<5000;
+      if(ok){btn.classList.add('ok');qsess.c++;gradeKey(pk(ans),true,fast);}
+      else{btn.classList.add('no');gradeKey(pk(ans),false);
         [...qo.children].forEach((c,i)=>{if(opts[i]===ans)c.classList.add('ok');});}
-      session++; commit();
-      $('qs').textContent='이번 세션: '+qsess.c+' / '+qsess.t;
-      setTimeout(newQuiz,950);
+      session++;commit();
+      $('pmeta').textContent='이번 세션: '+qsess.c+' / '+qsess.t+(ok&&!fast?'  · 조금 더 빠르게!':'');
+      setTimeout(nextRound,ok?800:1150);
     };
-    qo.appendChild(b);
+    qo.appendChild(btn);
   });
 }
+function renderWrite(){
+  $('bp').innerHTML=pItem.e.ko+' <small>('+pItem.e.r+')</small>';
+  $('bsa').textContent='→ '+(pItem.sc==='h'?'ひらがな':'カタカナ')+'로 쓰기';
+  $('bg').textContent='';$('bg').style.fontSize=guideSize(pCh);
+  bpad.clear();
+  $('br').textContent='';$('br').className='result';
+  $('bnext').hidden=true;$('bscore').hidden=false;
+}
+$('bclr').onclick=()=>bpad.clear();
+$('bnext').onclick=nextRound;
+$('bscore').onclick=()=>{
+  if(!bpad.dirty){$('br').textContent='먼저 써 보세요';return;}
+  const s=similarity($('bc'),pCh),ok=s>=60;
+  $('bg').textContent=pCh;
+  $('br').textContent='유사도 '+s+'%   ·   정답 '+pCh;
+  $('br').className='result '+(ok?'good':'bad');
+  qsess.t++;if(ok)qsess.c++;
+  gradeKey(pk(pItem),ok,true);
+  session++;commit();
+  $('pmeta').textContent='이번 세션: '+qsess.c+' / '+qsess.t;
+  $('bnext').hidden=false;$('bscore').hidden=true;
+  if(ok)setTimeout(()=>{if(!$('bnext').hidden)nextRound();},1300);
+};
 
 /* ---------- 라우팅 ---------- */
-const views={learn:()=>learnShow(cur||pick()),trace:newTrace,blank:newBlank,quiz:newQuiz};
+const views={learn:()=>learnShow(cur||nextItem()),practice:nextRound};
 document.querySelectorAll('nav button').forEach(btn=>{
   btn.onclick=()=>{
     const v=btn.dataset.v;
@@ -518,9 +515,9 @@ document.querySelectorAll('nav button').forEach(btn=>{
   };
 });
 const refreshActive=()=>views[document.querySelector('section.active').id.replace('view-','')]();
-$('reset').onclick=()=>{if(confirm('학습 기록을 모두 지울까요?')){prog={};cur=null;hist=[];session=0;commit();refreshActive();}};
+$('reset').onclick=()=>{if(confirm('학습 기록을 모두 지울까요?')){DB={};cur=null;hist=[];session=0;qsess={c:0,t:0};commit();refreshActive();}};
 
-buildPool(); learnShow(pick()); updateStats();
+learnShow(nextItem()); updateStats();
 if('serviceWorker'in navigator)navigator.serviceWorker.register('sw.js');
 </script>
 </body>
