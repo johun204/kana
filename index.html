@@ -22,17 +22,19 @@ header .sub b{color:#ffe08a}
 .bar{display:flex;gap:8px;padding:10px 16px;flex-wrap:wrap;align-items:center}
 .pbar{flex:1 0 100%;height:6px;background:#e2e4f0;border-radius:3px;overflow:hidden}
 .pfill{height:100%;background:var(--pp);width:0;transition:width .3s}
-.bar #stat{font-size:12px;color:#555}
-.bar #streak{margin-left:auto;font-size:12px}
+.bar #stat{font-size:12px;color:#555;flex:1}
+.bar #streak{font-size:12px}
+.audiobtn{border:1px solid #ccd;background:#fff;border-radius:8px;padding:3px 9px;font-size:13px}
 section{display:none;padding:8px 16px 24px}
 section.active{display:block}
 button{font-family:inherit;cursor:pointer}
 .card{background:#fff;border-radius:16px;padding:18px;box-shadow:0 2px 10px rgba(0,0,0,.05)}
-.big{display:flex;gap:30px;justify-content:center;margin-bottom:4px}
+.big{display:flex;gap:30px;justify-content:center;margin-bottom:2px}
 .kunit{display:flex;flex-direction:column;align-items:center;line-height:1}
-.kana{font-family:var(--jp);font-size:86px}
+.kana{font-family:var(--jp);font-size:84px}
 .kana.kk{color:#8a8fb0}
 .kread{font-size:15px;color:var(--pp);margin-top:6px;font-weight:700}
+.lsay{margin:8px auto 0;display:block;border:1px solid #ccd;background:#fff;border-radius:10px;padding:6px 16px;font-size:13px}
 .rom{text-align:center;font-size:14px;color:#666;margin:8px 0 2px}
 .rom b{color:var(--pp);font-size:16px}
 .lsc{text-align:center;color:var(--pp);font-size:13px;margin-bottom:8px}
@@ -40,12 +42,15 @@ button{font-family:inherit;cursor:pointer}
 .mn{font-size:14px;line-height:1.6;background:#f6f6fd;border-radius:10px;padding:10px 12px;margin:10px 0}
 .mn .tip{color:#555}
 .mn b{color:var(--pp)}
-.ex{font-size:14px;line-height:2.7}
+.ex{font-size:14px}
+.exrow{margin:8px 0;line-height:2.3;cursor:pointer}
+.exrow .m{color:#666;font-size:13px}
 .ex .tip{color:#888;line-height:1.6}
 .furi{display:inline-flex;align-items:flex-end;gap:1px;vertical-align:middle;margin:0 2px}
 .fu{display:inline-flex;flex-direction:column;align-items:center;line-height:1.1}
 .fr{font-size:9.5px;color:var(--pp);height:12px}
 .fk{font-family:var(--jp);font-size:20px}
+.sp{display:inline-block;width:7px}
 .mark{display:flex;gap:10px;margin-top:14px}
 .mark button{flex:1;padding:12px;border:0;border-radius:10px;font-size:15px}
 #lkno{background:#e3fbe8;color:#1a7a33}
@@ -81,6 +86,12 @@ button{font-family:inherit;cursor:pointer}
 .qopts button.ok{background:#e3fbe8;border-color:#1a7a33}
 .qopts button.no{background:#ffe9e9;border-color:#b23}
 .hint{text-align:center;color:#999;font-size:12px;margin-top:8px;line-height:1.5}
+#plist h3{font-size:13px;color:var(--pp);margin:18px 0 4px;border-bottom:1px solid #eee;padding-bottom:3px}
+#plist h3:first-child{margin-top:2px}
+.ph{padding:10px 4px;border-bottom:1px solid #f0f0f4;cursor:pointer}
+.ph .pko{font-size:13px;color:#555;margin-top:3px}
+.ph:active{background:#f6f6fd}
+.talktip{font-size:11.5px;color:#888;line-height:1.6;margin-bottom:6px}
 nav{position:fixed;bottom:0;left:0;right:0;max-width:480px;margin:0 auto;display:flex;
   background:#fff;border-top:1px solid #e0e0ea}
 nav button{flex:1;padding:12px 0;border:0;background:none;font-size:14px;color:#888}
@@ -91,13 +102,14 @@ nav button.on{color:var(--pp);font-weight:700}
 <body>
 <header>
   <h1>가나 집중 학습 <button class="tinybtn" id="reset">기록 초기화</button></h1>
-  <div class="sub"><b>간격 반복(SRS)</b>으로 복습 시점을 자동 관리 · <b>양방향 인출</b>(모양↔소리) · <b>직접 쓰기</b> · <b>혼동쌍 섞기</b>. 5분이든 20분이든 원하는 만큼.</div>
+  <div class="sub"><b>간격 반복(SRS)</b> · <b>양방향 인출</b> · <b>직접 쓰기</b> · <b>음성</b> · <b>여행 회화</b>. 이 페이지만으로 왕초보 → 여행 회화까지.</div>
 </header>
 
 <div class="bar">
   <div class="pbar"><div class="pfill" id="pfill"></div></div>
   <span id="stat"></span>
   <span id="streak"></span>
+  <button id="audio" class="audiobtn">🔊</button>
 </div>
 
 <section id="view-learn" class="active">
@@ -106,6 +118,7 @@ nav button.on{color:var(--pp);font-weight:700}
       <div class="kunit"><span class="kana" id="lhh"></span><span class="kread" id="lhr"></span></div>
       <div class="kunit"><span class="kana kk" id="lkk"></span><span class="kread" id="lkr"></span></div>
     </div>
+    <button class="lsay" id="lsay">🔊 발음 듣기</button>
     <div class="rom" id="lrom"></div>
     <div class="lsc" id="lsc"></div>
     <div class="mn" id="lmn"></div>
@@ -126,12 +139,10 @@ nav button.on{color:var(--pp);font-weight:700}
 <section id="view-practice">
   <div class="card">
     <div class="qmeta" id="pmeta">이번 세션: 0 / 0</div>
-
     <div id="pquiz">
       <div class="qq" id="qq"></div>
       <div class="qopts" id="qo"></div>
     </div>
-
     <div id="pwrite" hidden>
       <div class="prompt" id="bp"></div>
       <div class="scriptask" id="bsa"></div>
@@ -147,9 +158,17 @@ nav button.on{color:var(--pp);font-weight:700}
   </div>
 </section>
 
+<section id="view-talk">
+  <div class="card">
+    <div class="talktip">문장을 누르면 소리가 나옵니다. 가나 위 작은 글씨는 한글 발음. ○○ 자리에 지명·메뉴를 넣어 쓰세요.</div>
+    <div id="plist"></div>
+  </div>
+</section>
+
 <nav>
   <button data-v="learn" class="on">학습</button>
   <button data-v="practice">연습</button>
+  <button data-v="talk">회화</button>
 </nav>
 
 <script>
@@ -274,7 +293,205 @@ const YOUON=`
 ぢょ|ヂョ|djo|죠|—|—|발음은 じょ와 동일 · 실제로는 거의 안 씀|—|—|—
 `.trim().split('\n').map(l=>{const p=l.split('|');return{h:p[0],k:p[1],r:p[2],ko:p[3],hm:'',km:'',he:p[4],heko:p[5],hek:p[6],ke:p[7],keko:p[8],kek:p[9]};});
 
-// 학습 순서: 히라 청음 → 가타 청음 → 탁음 히라 → 탁음 가타 → 요음 히라 → 요음 가타
+// 여행·음식·일상 단어 (가나만) — jp|뜻
+const WORDS=`
+すし|초밥
+さしみ|회
+ラーメン|라멘
+うどん|우동
+そば|메밀국수
+てんぷら|튀김
+からあげ|가라아게(닭튀김)
+ぎょうざ|교자(군만두)
+おにぎり|주먹밥
+みそしる|된장국
+ごはん|밥
+おかゆ|죽
+パン|빵
+サンドイッチ|샌드위치
+サラダ|샐러드
+スープ|수프
+ステーキ|스테이크
+ハンバーガー|햄버거
+カレー|카레
+オムライス|오므라이스
+やきにく|야키니쿠(고기구이)
+やきとり|닭꼬치
+おこのみやき|오코노미야키
+たこやき|타코야키
+なべ|전골
+どんぶり|덮밥
+ていしょく|정식
+デザート|디저트
+アイスクリーム|아이스크림
+くだもの|과일
+やさい|채소
+たまご|계란
+にく|고기
+さかな|생선
+みず|물
+おちゃ|차
+コーヒー|커피
+こうちゃ|홍차
+ぎゅうにゅう|우유
+ビール|맥주
+にほんしゅ|일본 술(사케)
+ワイン|와인
+ジュース|주스
+おさけ|술
+こおり|얼음
+さとう|설탕
+しお|소금
+しょうゆ|간장
+こしょう|후추
+メニュー|메뉴
+おすすめ|추천
+ちゅうもん|주문
+おかいけい|계산
+おかわり|리필
+はしおき|젓가락 받침
+おしぼり|물수건
+とりざら|앞접시
+テイクアウト|포장
+せき|자리
+まどがわ|창가 자리
+きんえん|금연
+きつえん|흡연
+よやく|예약
+ひとつ|한 개
+ふたつ|두 개
+みっつ|세 개
+いくら|얼마
+おいしい|맛있다
+からい|맵다
+あまい|달다
+えき|역
+でんしゃ|전철
+ちかてつ|지하철
+しんかんせん|신칸센
+バス|버스
+タクシー|택시
+ひこうき|비행기
+くうこう|공항
+きっぷ|표
+かたみち|편도
+おうふく|왕복
+のりば|타는 곳
+でぐち|출구
+いりぐち|입구
+ホーム|승강장
+じかんひょう|시간표
+ちず|지도
+みぎ|오른쪽
+ひだり|왼쪽
+まっすぐ|직진
+ちかい|가깝다
+とおい|멀다
+ここ|여기
+そこ|거기
+あそこ|저기
+ホテル|호텔
+りょかん|료칸
+チェックイン|체크인
+チェックアウト|체크아웃
+へや|방
+かぎ|열쇠
+トイレ|화장실
+おてあらい|화장실(정중)
+おふろ|욕실
+コンビニ|편의점
+スーパー|슈퍼
+くすりや|약국
+びょういん|병원
+ぎんこう|은행
+ゆうびんきょく|우체국
+こうばん|파출소
+おかね|돈
+げんきん|현금
+カード|카드
+レシート|영수증
+ふくろ|봉투
+わりびき|할인
+サイズ|사이즈
+いろ|색
+たかい|비싸다
+やすい|싸다
+きょう|오늘
+あした|내일
+きのう|어제
+いま|지금
+あさ|아침
+ひる|낮
+よる|밤
+なまえ|이름
+にほん|일본
+かんこく|한국
+`.trim().split('\n').map(l=>l.split('|'));
+
+// 생존 회화 — 분류|일본어(가나)|뜻
+const PHRASES=`
+인사·기본|こんにちは|안녕하세요 (낮)
+인사·기본|おはよう ございます|안녕하세요 (아침)
+인사·기본|こんばんは|안녕하세요 (저녁)
+인사·기본|ありがとう ございます|감사합니다
+인사·기본|すみません|실례합니다 / 죄송합니다
+인사·기본|はい / いいえ|네 / 아니요
+인사·기본|おねがい します|부탁합니다
+인사·기본|だいじょうぶ です|괜찮아요
+인사·기본|にほんご が わかりません|일본어를 몰라요
+인사·기본|えいご が はなせますか|영어 하실 수 있어요?
+인사·기본|ゆっくり おねがい します|천천히 말해 주세요
+인사·기본|もう いちど おねがい します|한 번 더 말해 주세요
+이동·길|○○は どこ ですか|○○는 어디예요?
+이동·길|えき は どこ ですか|역이 어디예요?
+이동·길|トイレ は どこ ですか|화장실이 어디예요?
+이동·길|○○に いきたい です|○○에 가고 싶어요
+이동·길|あるいて いけますか|걸어서 갈 수 있어요?
+이동·길|どのくらい かかりますか|얼마나 걸려요?
+이동·길|この でんしゃ は ○○に いきますか|이 전철 ○○에 가요?
+이동·길|ここ で とまって ください|여기서 세워 주세요
+이동·길|くうこう まで おねがい します|공항까지 가 주세요
+이동·길|ちず を みせて ください|지도를 보여 주세요
+식당·주문|メニュー を ください|메뉴 주세요
+식당·주문|これ を ください|이거 주세요
+식당·주문|おすすめ は なん ですか|추천 메뉴가 뭐예요?
+식당·주문|これ は なん ですか|이건 뭐예요?
+식당·주문|ひとつ ください|하나 주세요
+식당·주문|おなじ もの を ください|같은 걸로 주세요
+식당·주문|みず を ください|물 주세요
+식당·주문|からく しないで ください|안 맵게 해 주세요
+식당·주문|とりざら を ください|앞접시 주세요
+식당·주문|アレルギー が あります|알레르기가 있어요
+식당·주문|とても おいしい です|정말 맛있어요
+식당·주문|おかいけい おねがい します|계산해 주세요
+식당·주문|カード は つかえますか|카드 되나요?
+식당·주문|テイクアウト できますか|포장 되나요?
+쇼핑|いくら ですか|얼마예요?
+쇼핑|これ を みせて ください|이거 보여 주세요
+쇼핑|しちゃく できますか|입어 봐도 돼요?
+쇼핑|もっと おおきいの は ありますか|더 큰 거 있어요?
+쇼핑|もっと やすいの は ありますか|더 싼 거 있어요?
+쇼핑|これ を かいます|이걸로 살게요
+쇼핑|ふくろ を ください|봉투 주세요
+쇼핑|べつべつに して ください|따로 계산해 주세요
+숙소|チェックイン おねがい します|체크인 할게요
+숙소|よやく して います|예약했어요
+숙소|Wi-Fi の パスワード は なん ですか|와이파이 비밀번호가 뭐예요?
+숙소|へや の かぎ を なくしました|방 열쇠를 잃어버렸어요
+숙소|もう いっぱく できますか|하룻밤 더 묵을 수 있어요?
+곤란할 때|たすけて ください|도와주세요
+곤란할 때|びょういん に いきたい です|병원에 가고 싶어요
+곤란할 때|パスポート を なくしました|여권을 잃어버렸어요
+곤란할 때|けいさつ を よんで ください|경찰을 불러 주세요
+곤란할 때|きぶん が わるい です|몸이 안 좋아요
+곤란할 때|でんわ を かりても いい ですか|전화 좀 빌릴 수 있어요?
+숫자·돈|いち・に・さん・し・ご|1·2·3·4·5
+숫자·돈|ろく・なな・はち・きゅう・じゅう|6·7·8·9·10
+숫자·돈|ひゃく・せん・まん|100·1,000·10,000
+숫자·돈|ぜんぶで いくら ですか|전부 얼마예요?
+숫자·돈|げんきん で はらいます|현금으로 낼게요
+`.trim().split('\n').map(l=>l.split('|'));
+
 const CURRICULUM=[].concat(
   GOJUON.map(e=>({e,sc:'h'})), GOJUON.map(e=>({e,sc:'k'})),
   DAKUTEN.map(e=>({e,sc:'h'})), DAKUTEN.map(e=>({e,sc:'k'})),
@@ -285,32 +502,52 @@ const CURRICULUM=[].concat(
 const KMAP={};
 [GOJUON,DAKUTEN,YOUON].forEach(A=>A.forEach(e=>{KMAP[e.h]=e.ko;KMAP[e.k]=e.ko;}));
 Object.assign(KMAP,{'ん':'ㄴ','ン':'ㄴ','っ':'ㅅ','ッ':'ㅅ','ー':''});
-const SMALL=/[ゃゅょャュョ]/;
+const COMBO={'フォ':'포','ファ':'파','フィ':'피','フェ':'페','チェ':'체','シェ':'셰','ジェ':'제',
+  'ウィ':'위','ウェ':'웨','ウォ':'워','ティ':'티','ディ':'디'};
+const SMALL=/[ゃゅょャュョぁぃぅぇぉァィゥェォ]/;
 function furi(w){
   const out=[];
   for(const ch of w){
-    if(SMALL.test(ch)&&out.length){const p=out[out.length-1];p.k+=ch;p.ko=KMAP[p.k]||p.ko;}
+    if(SMALL.test(ch)&&out.length){const p=out[out.length-1];p.k+=ch;p.ko=KMAP[p.k]||COMBO[p.k]||p.ko;}
     else out.push({k:ch,ko:KMAP[ch]||''});
   }
   return out;
 }
 function wordHtml(w){
   return '<span class="furi">'+furi(w).map(t=>
-    '<span class="fu"><span class="fr">'+t.ko+'</span><span class="fk">'+t.k+'</span></span>').join('')+'</span>';
+    t.k===' ' ? '<span class="sp"></span>'
+    : '<span class="fu"><span class="fr">'+t.ko+'</span><span class="fk">'+t.k+'</span></span>'
+  ).join('')+'</span>';
 }
-function exHtml(e){
-  let s='';
-  if(e.he&&e.he!=='—') s+='예 '+wordHtml(e.he)+' &mdash; '+e.hek;
-  else s+='<span class="tip">'+e.hek+'</span>';
-  if(e.ke&&e.ke!=='—') s+='<br>예 '+wordHtml(e.ke)+' &mdash; '+e.kek;
-  return s;
+
+/* ---------- 음성 (브라우저 내장 TTS) ---------- */
+let audioOn=localStorage.getItem('kana_audio')!=='0';
+let jaVoice=null;
+function loadVoices(){
+  if(!('speechSynthesis'in window))return;
+  const vs=speechSynthesis.getVoices();
+  jaVoice=vs.find(v=>/ja[-_]?JP/i.test(v.lang))||vs.find(v=>/^ja/i.test(v.lang))||null;
 }
+if('speechSynthesis'in window){ loadVoices(); speechSynthesis.onvoiceschanged=loadVoices; }
+function speak(t){
+  if(!audioOn||!t||!('speechSynthesis'in window))return;
+  try{
+    speechSynthesis.cancel();
+    const u=new SpeechSynthesisUtterance(t);
+    u.lang='ja-JP'; u.rate=.8; if(jaVoice)u.voice=jaVoice;
+    speechSynthesis.speak(u);
+  }catch(e){}
+}
+document.addEventListener('click',ev=>{
+  const s=ev.target.closest('[data-say]');
+  if(s)speak(s.getAttribute('data-say'));
+});
 
 /* ---------- SRS (라이트너 확장 간격) ---------- */
 const MIN=6e4,HOUR=36e5,DAY=864e5;
-const IVL=[MIN,10*MIN,HOUR,5*HOUR,DAY,3*DAY]; // box 0~5 다음 복습까지
+const IVL=[MIN,10*MIN,HOUR,5*HOUR,DAY,3*DAY];
 let DB=JSON.parse(localStorage.getItem('kana_srs')||'null');
-if(!DB){ // 이전 버전(streak) 마이그레이션
+if(!DB){
   DB={};
   const old=JSON.parse(localStorage.getItem('kana_prog')||'{}');
   for(const k in old){const s=+old[k]||0;DB[k]={b:s>=3?4:s,due:0,seen:1};}
@@ -323,7 +560,7 @@ const isMastered=it=>boxOf(it)>=4;
 function gradeKey(key,ok,fast){
   const r=DB[key]||{b:0,seen:0};
   r.seen=(r.seen||0)+1;
-  if(ok)r.b=Math.min(5,r.b+(fast===false?0:1)); // 느리게 맞히면 상자 유지(유창성)
+  if(ok)r.b=Math.min(5,r.b+(fast===false?0:1));
   else r.b=Math.max(0,r.b-2);
   r.due=Date.now()+IVL[r.b];
   DB[key]=r;
@@ -341,10 +578,8 @@ if(meta.last!==today){
 let session=0, lastKey=null, qsess={c:0,t:0};
 function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]];}return a;}
 function masteredCount(){return CURRICULUM.reduce((n,it)=>n+(isMastered(it)?1:0),0);}
-function unlockedN(){return Math.min(CURRICULUM.length,8+masteredCount());} // 익힌 만큼만 새 글자 개방
+function unlockedN(){return Math.min(CURRICULUM.length,8+masteredCount());}
 function unlockedList(){return CURRICULUM.slice(0,unlockedN());}
-
-// 스케줄러: 복습 예정 → 새 글자 → 가장 가까운 예정
 function nextItem(){
   const now=Date.now(), U=unlockedList();
   let due=U.filter(it=>{const r=DB[pk(it)];return r&&r.due<=now&&pk(it)!==lastKey;})
@@ -364,12 +599,25 @@ function updateStats(){
   if($('view-learn').classList.contains('active'))renderGrid();
 }
 
-/* ---------- 학습 (플래시카드 스트림) ---------- */
+/* ---------- 학습 ---------- */
 let cur=null,hist=[];
+function exHtml(it){
+  const e=it.e, ch=it.sc==='h'?e.h:e.k;
+  const pjp=it.sc==='h'?e.he:(e.ke&&e.ke!=='—'?e.ke:e.he);
+  const pko=it.sc==='h'?e.hek:(e.ke&&e.ke!=='—'?e.kek:e.hek);
+  let s;
+  if(pjp&&pjp!=='—') s='<div class="exrow" data-say="'+pjp+'">🔊 '+wordHtml(pjp)+' <span class="m">— '+pko+'</span></div>';
+  else s='<div class="tip">'+e.hek+'</div>';
+  WORDS.filter(w=>w[0].includes(ch) && w[0]!==pjp).slice(0,3).forEach(w=>{
+    s+='<div class="exrow" data-say="'+w[0]+'">🔊 '+wordHtml(w[0])+' <span class="m">— '+w[1]+'</span></div>';
+  });
+  return s;
+}
 function learnShow(it){
   cur=it;const e=it.e;
   $('lhh').textContent=e.h; $('lhr').textContent=KMAP[e.h]||e.ko;
   $('lkk').textContent=e.k; $('lkr').textContent=KMAP[e.k]||e.ko;
+  $('lsay').dataset.say=e.h;
   $('lrom').innerHTML='로마자 <b>'+e.r+'</b>';
   $('lsc').textContent=it.sc==='h'?'히라가나':'가타카나';
   const isY=/[ゃゅょ]/.test(e.h);
@@ -379,8 +627,9 @@ function learnShow(it){
     :isY
       ?'<div class="tip">작은 <b>ゃ·ゅ·ょ</b>는 앞의 い단 글자와 합쳐 <b>한 박자</b>로 발음. きゃ=「캬」. 아는 두 글자의 조합.</div>'
       :'<div class="tip">탁점 ゛ : 맑은소리→흐린소리 (か→が, さ→ざ, は→ば). 반탁점 ゜ : は행→ぱ행.</div>');
-  $('lex').innerHTML=exHtml(e);
+  $('lex').innerHTML=exHtml(it);
   renderGrid();
+  speak(e.h);
 }
 function learnNext(g){
   if(cur){
@@ -422,7 +671,6 @@ function bindPad(cv){
   ['pointerup','pointercancel','pointerleave'].forEach(ev=>cv.addEventListener(ev,end));
   return{ctx,clear(){ctx.clearRect(0,0,cv.width,cv.height);dirty=false;},get dirty(){return dirty;}};
 }
-// ponytail: 유사도 = 실제 글자 글리프와 손글씨의 픽셀 겹침 F1. 획 순서/모양은 안 봄.
 function similarity(cv,ch){
   const W=cv.width,H=cv.height;
   const off=document.createElement('canvas');off.width=W;off.height=H;
@@ -439,7 +687,7 @@ function similarity(cv,ch){
 }
 const guideSize=ch=>ch.length>1?'min(140px,40vw)':'';
 
-/* ---------- 연습 (퀴즈 + 백지쓰기 랜덤 혼합) ---------- */
+/* ---------- 연습 (퀴즈 + 백지쓰기 랜덤) ---------- */
 const bpad=bindPad($('bc'));
 const CONFUSE={shi:['tsu'],tsu:['shi'],so:['n'],n:['so'],nu:['me'],me:['nu'],
   wa:['re','ne'],re:['wa','ne'],ne:['re','wa'],ku:['wa'],ru:['ro'],ro:['ru'],
@@ -473,6 +721,7 @@ function renderQuiz(){
       if(ok){btn.classList.add('ok');qsess.c++;gradeKey(pk(ans),true,fast);}
       else{btn.classList.add('no');gradeKey(pk(ans),false);
         [...qo.children].forEach((c,i)=>{if(opts[i]===ans)c.classList.add('ok');});}
+      speak(sc==='h'?ans.e.h:ans.e.k);
       session++;commit();
       $('pmeta').textContent='이번 세션: '+qsess.c+' / '+qsess.t+(ok&&!fast?'  · 조금 더 빠르게!':'');
       setTimeout(nextRound,ok?800:1150);
@@ -496,16 +745,28 @@ $('bscore').onclick=()=>{
   $('bg').textContent=pCh;
   $('br').textContent='유사도 '+s+'%   ·   정답 '+pCh;
   $('br').className='result '+(ok?'good':'bad');
+  speak(pCh);
   qsess.t++;if(ok)qsess.c++;
   gradeKey(pk(pItem),ok,true);
   session++;commit();
   $('pmeta').textContent='이번 세션: '+qsess.c+' / '+qsess.t;
   $('bnext').hidden=false;$('bscore').hidden=true;
-  if(ok)setTimeout(()=>{if(!$('bnext').hidden)nextRound();},1300);
+  if(ok)setTimeout(()=>{if(!$('bnext').hidden)nextRound();},1400);
 };
 
+/* ---------- 회화 ---------- */
+function renderTalk(){
+  const w=$('plist'); if(w.dataset.done)return; w.dataset.done='1';
+  let cat='',html='';
+  PHRASES.forEach(([c,jp,ko])=>{
+    if(c!==cat){cat=c;html+='<h3>'+c+'</h3>';}
+    html+='<div class="ph" data-say="'+jp.replace(/[ ・/]/g,'')+'">'+wordHtml(jp)+'<div class="pko">'+ko+'</div></div>';
+  });
+  w.innerHTML=html;
+}
+
 /* ---------- 라우팅 ---------- */
-const views={learn:()=>learnShow(cur||nextItem()),practice:nextRound};
+const views={learn:()=>learnShow(cur||nextItem()),practice:nextRound,talk:renderTalk};
 document.querySelectorAll('nav button').forEach(btn=>{
   btn.onclick=()=>{
     const v=btn.dataset.v;
@@ -516,6 +777,12 @@ document.querySelectorAll('nav button').forEach(btn=>{
 });
 const refreshActive=()=>views[document.querySelector('section.active').id.replace('view-','')]();
 $('reset').onclick=()=>{if(confirm('학습 기록을 모두 지울까요?')){DB={};cur=null;hist=[];session=0;qsess={c:0,t:0};commit();refreshActive();}};
+$('audio').onclick=()=>{
+  audioOn=!audioOn; localStorage.setItem('kana_audio',audioOn?'1':'0');
+  $('audio').textContent=audioOn?'🔊':'🔇';
+  if(audioOn)speak('こんにちは');
+};
+$('audio').textContent=audioOn?'🔊':'🔇';
 
 learnShow(nextItem()); updateStats();
 if('serviceWorker'in navigator)navigator.serviceWorker.register('sw.js');
