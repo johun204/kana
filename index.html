@@ -48,6 +48,7 @@ section.active{display:block}
 .ghud .gcombo{color:#e67e22;font-weight:700;min-width:38px;text-align:right}
 .timerwrap{height:6px;background:#e2e4f0;border-radius:3px;overflow:hidden;margin-bottom:14px}
 .timerfill{height:100%;width:100%;background:var(--pp)}
+.timerfill.frozen{background:#ccd}
 .prompt{text-align:center;min-height:90px;display:flex;flex-direction:column;align-items:center;justify-content:center}
 .prompt.big{font-family:var(--jp);font-size:78px}
 .prompt.reading{font-size:30px;color:var(--pp);font-weight:700}
@@ -55,8 +56,10 @@ section.active{display:block}
 .qopts{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
 .qopts button{padding:16px 8px;font-size:17px;border:1px solid #ccd;background:#fff;border-radius:12px}
 .qopts.jpopts button{font-family:var(--jp);font-size:26px}
-.qopts button.ok{background:#e3fbe8;border-color:#1a7a33}
-.qopts button.no{background:#ffe9e9;border-color:#b23}
+.qopts button.ok{background:#e3fbe8;border-color:#1a7a33;box-shadow:0 0 0 2px #1a7a33 inset}
+.qopts button.no{background:#ffe9e9;border-color:#b23;box-shadow:0 0 0 2px #b23 inset}
+.qopts.reveal{pointer-events:none}
+.qopts.reveal button:not(.ok):not(.no){opacity:.4}
 .feedback{min-height:20px;font-size:12.5px;color:#888;text-align:center;line-height:1.6;margin-top:12px}
 .gback{border:1px solid #ccd;background:#fff;border-radius:8px;padding:4px 10px;font-size:13px}
 .ctx{font-size:13px;color:var(--pp);font-weight:700;margin-bottom:6px}
@@ -618,13 +621,17 @@ function nextQuestion(){
   play.qStart=Date.now();
   renderQuestion(play.cur);
   const bar=$('g-timerfill');
-  bar.style.transition='none';bar.style.width='100%';
-  requestAnimationFrame(()=>{bar.style.transition='width '+play.timeLimit+'ms linear';bar.style.width='0%';});
+  bar.classList.remove('frozen');
+  bar.style.transition='none';
+  bar.style.width='100%';
+  void bar.offsetWidth; // 강제 리플로우: transition 재시작이 안 먹는 버그 방지
+  bar.style.transition='width '+play.timeLimit+'ms linear';
+  bar.style.width='0%';
   play.timer=setTimeout(()=>answer(false,null),play.timeLimit);
 }
 function renderQuestion(item){
   const qo=$('g-opts'),prompt=$('g-prompt');
-  qo.innerHTML='';qo.dataset.done='';qo.classList.remove('jpopts');
+  qo.innerHTML='';qo.dataset.done='';qo.classList.remove('jpopts','reveal');
   if(play.type==='char'){
     const {e,sc}=item, flip=Math.random()<0.5;
     prompt.className='prompt'+(flip?' reading':' big');
@@ -637,7 +644,7 @@ function renderQuestion(item){
       const b=document.createElement('button');
       b.textContent=flip?(sc==='h'?o.h:o.k):o.ko+' ('+o.r+')';
       if(o===e)play.correctEl=b;
-      b.onclick=()=>{if(qo.dataset.done)return;qo.dataset.done='1';answer(o===e,b);};
+      b.onclick=()=>answer(o===e,b);
       qo.appendChild(b);
     });
     return;
@@ -659,12 +666,21 @@ function renderQuestion(item){
     const b=document.createElement('button');
     b.textContent=o.ko;
     if(o===item)play.correctEl=b;
-    b.onclick=()=>{if(qo.dataset.done)return;qo.dataset.done='1';answer(o===item,b);};
+    b.onclick=()=>answer(o===item,b);
     qo.appendChild(b);
   });
 }
 function answer(ok,btn){
+  const qo=$('g-opts');
+  if(qo.dataset.done)return; // 클릭/타임아웃 동시 발생 등 중복 호출 방지
+  qo.dataset.done='1';
+  qo.classList.add('reveal');
   clearTimeout(play.timer);
+  const bar=$('g-timerfill');
+  const frozenWidth=getComputedStyle(bar).width; // 멈춘 시점의 실제 렌더 폭
+  bar.style.transition='none';
+  bar.style.width=frozenWidth; // 리셋 아님 — 남아있던 위치에서 그대로 정지
+  bar.classList.add('frozen');
   if(ok){
     play.combo++;play.comboMax=Math.max(play.comboMax,play.combo);
     const mult=Math.min(3,1+Math.floor((play.combo-1)/3));
