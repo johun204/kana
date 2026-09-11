@@ -1,6 +1,6 @@
 {
-  "name": "가나 일주일 완성",
-  "short_name": "가나",
+  "name": "가나 게임",
+  "short_name": "가나 게임",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
