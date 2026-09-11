@@ -30,18 +30,16 @@ section.active{display:block}
 .fk{font-family:var(--jp);font-size:30px}
 .sp{display:inline-block;width:7px}
 
-/* 홈 · 스테이지 목록 */
-.stagelist h3{font-size:13px;color:var(--pp);margin:16px 4px 6px;border-bottom:1px solid #eee;padding-bottom:3px}
-.stagelist h3:first-child{margin-top:2px}
-.stagerow{display:flex;align-items:center;gap:12px;background:#fff;border-radius:12px;padding:10px 12px;
-  margin-bottom:7px;box-shadow:0 1px 4px rgba(0,0,0,.04)}
-.stagerow.locked{opacity:.45}
-.sicon{font-family:var(--jp);font-size:22px;width:34px;height:34px;border-radius:50%;background:#f0f0fb;
-  display:flex;align-items:center;justify-content:center;color:var(--pp);flex-shrink:0}
-.sinfo{flex:1;min-width:0}
-.sinfo b{font-size:14px;font-family:var(--jp)}
-.sinfo small{color:#888;font-size:11.5px}
-.sstars{font-size:13px;color:#f0a500;white-space:nowrap}
+/* 홈 · 모드 선택 */
+.modecard{display:flex;align-items:center;gap:12px;background:#fff;border-radius:14px;padding:14px 12px;
+  margin-bottom:10px;box-shadow:0 1px 4px rgba(0,0,0,.04)}
+.modecard:active{background:#f6f6fd}
+.micon{font-size:28px;width:44px;height:44px;border-radius:50%;background:#f0f0fb;
+  display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.minfo{flex:1;min-width:0}
+.minfo b{font-size:15px}
+.minfo small{color:#888;font-size:12px}
+.mbest{font-size:12px;color:#f0a500;white-space:nowrap;font-weight:700}
 
 /* 게임 화면 */
 .ghud{display:flex;align-items:center;gap:10px;font-size:14px;margin-bottom:6px}
@@ -61,11 +59,11 @@ section.active{display:block}
 .qopts button.no{background:#ffe9e9;border-color:#b23}
 .feedback{min-height:20px;font-size:12.5px;color:#888;text-align:center;line-height:1.6;margin-top:12px}
 .gback{border:1px solid #ccd;background:#fff;border-radius:8px;padding:4px 10px;font-size:13px}
+.ctx{font-size:13px;color:var(--pp);font-weight:700;margin-bottom:6px}
 
 /* 결과 화면 */
-.rstars{font-size:44px;color:#f0a500;text-align:center;margin:6px 0}
-.rtitle{text-align:center;font-size:19px;font-weight:700}
-.rscore{text-align:center;color:#666;font-size:13.5px;margin:6px 0 16px}
+.rtitle{text-align:center;font-size:19px;font-weight:700;margin-top:10px}
+.rscore{text-align:center;color:#666;font-size:13.5px;margin:10px 0 20px}
 .rbtns{display:flex;flex-direction:column;gap:10px}
 .rbtns button{padding:13px;border:0;border-radius:10px;font-size:15px;background:var(--pp);color:#fff}
 .rbtns button.ghost{background:#fff;color:var(--pp);border:1px solid #ddd}
@@ -74,7 +72,6 @@ section.active{display:block}
 <body>
 <header>
   <h1 id="hdr-title">가나 게임</h1>
-  <span class="hstat" id="hdr-stars"></span>
   <span class="hstat" id="hdr-streak"></span>
   <button class="iconbtn" id="audio">🔊</button>
   <button class="iconbtn" id="reset">초기화</button>
@@ -82,10 +79,10 @@ section.active{display:block}
 
 <section id="view-home" class="active">
   <div class="card" style="margin-bottom:12px;font-size:13px;color:#666;line-height:1.6">
-    <b style="color:var(--pp)">스피드 매칭</b>으로 히라가나·가타카나·여행 단어·생존 회화를 빠르게 정복하세요.
-    스테이지를 클리어하면 다음 스테이지가 열려요.
+    모드를 골라 바로 시작하세요. 진행은 저장하지 않고 <b style="color:var(--pp)">매번 랜덤</b>으로 나와요.
+    하트 3개, 시간 안에 정답을 맞혀 콤보와 점수를 쌓아보세요.
   </div>
-  <div class="stagelist" id="home-list"></div>
+  <div class="modelist" id="home-list"></div>
 </section>
 
 <section id="view-game">
@@ -109,12 +106,10 @@ section.active{display:block}
 <section id="view-result">
   <div class="card">
     <div class="rtitle" id="r-title"></div>
-    <div class="rstars" id="r-stars"></div>
     <div class="rscore" id="r-score"></div>
     <div class="rbtns">
-      <button id="r-next" hidden>다음 스테이지 →</button>
-      <button class="ghost" id="r-retry">다시 도전</button>
-      <button class="ghost" id="r-home">스테이지 목록</button>
+      <button id="r-retry">다시 도전</button>
+      <button class="ghost" id="r-home">모드 선택</button>
     </div>
   </div>
 </section>
@@ -440,9 +435,49 @@ const PHRASES=`
 숫자·돈|げんきん で はらいます|현금으로 낼게요
 `.trim().split('\n').map(l=>l.split('|'));
 
+// 일본 주요 여행지 지명·역명 — 도시|일본어(가나)|뜻
+const TRAVEL=`
+도쿄|とうきょう|도쿄역
+도쿄|しんじゅく|신주쿠
+도쿄|しぶや|시부야
+도쿄|あさくさ|아사쿠사
+도쿄|うえの|우에노
+도쿄|いけぶくろ|이케부쿠로
+도쿄|はらじゅく|하라주쿠
+도쿄|ぎんざ|긴자
+도쿄|あきはばら|아키하바라
+도쿄|スカイツリー|스카이트리
+오사카|おおさか|오사카역
+오사카|なんば|난바
+오사카|しんさいばし|신사이바시
+오사카|うめだ|우메다
+오사카|どうとんぼり|도톤보리
+오사카|てんのうじ|텐노지
+오사카|ユニバーサル|유니버설스튜디오
+후쿠오카|はかた|하카타
+후쿠오카|てんじん|텐진
+후쿠오카|ふくおか|후쿠오카
+후쿠오카|やたい|야타이(포장마차)
+후쿠오카|だざいふ|다자이후
+삿포로|さっぽろ|삿포로
+삿포로|すすきの|스스키노
+삿포로|おたる|오타루
+삿포로|はこだて|하코다테
+`.trim().split('\n').map(l=>l.split('|'));
+
 const ALLKANA=[].concat(GOJUON,DAKUTEN,YOUON);
 const WORDPOOL=WORDS.map(w=>({jp:w[0],ko:w[1]}));
-const PHRASEPOOL=PHRASES.map(([c,jp,ko])=>({jp,ko}));
+const PHRASEPOOL=PHRASES.map(([c,jp,ko])=>({c,jp,ko}));
+const TRAVELPOOL=TRAVEL.map(([city,jp,ko])=>({city,jp,ko}));
+const SCENARIO_FLAVOR={
+  '인사·기본':{emoji:'🙋',text:'상대방이 먼저 말을 건넵니다.'},
+  '이동·길':{emoji:'🧭',text:'지나가는 사람에게 길을 물어봅니다.'},
+  '식당·주문':{emoji:'🍜',text:'식당 점원이 다가와 말합니다.'},
+  '쇼핑':{emoji:'🛍️',text:'가게 점원이 말을 겁니다.'},
+  '숙소':{emoji:'🏨',text:'호텔 프런트 직원이 말합니다.'},
+  '곤란할 때':{emoji:'🚨',text:'돌발 상황! 도움이 필요합니다.'},
+  '숫자·돈':{emoji:'💴',text:'계산할 때 필요한 숫자입니다.'},
+};
 
 // 가나 한 글자 → 한글 발음 (예문 후리가나용)
 const KMAP={};
@@ -485,45 +520,6 @@ function speak(t){
   }catch(e){}
 }
 
-/* ---------- 커리큘럼: 기존 데이터를 자동으로 스테이지로 분할 ---------- */
-function chunk(arr,sizes){
-  const out=[]; let i=0,s=0;
-  while(i<arr.length){
-    const n=sizes[Math.min(s,sizes.length-1)];
-    out.push(arr.slice(i,i+n)); i+=n; s++;
-  }
-  return out;
-}
-let sid=0;
-const stages=[];
-function addCharWorld(list,sizes,sc,world){
-  chunk(list,sizes).forEach(grp=>{
-    stages.push({
-      id:'c'+(sid++), world, kind:'char', sc,
-      title:grp.map(e=>sc==='h'?e.h:e.k).join(''),
-      items:grp.map(e=>({e,sc}))
-    });
-  });
-}
-addCharWorld(GOJUON,[5,5,5,5,5,5,5,3,5,3],'h','히라가나 기초');
-addCharWorld(GOJUON,[5,5,5,5,5,5,5,3,5,3],'k','가타카나 기초');
-addCharWorld(DAKUTEN,[5],'h','히라가나 탁음·반탁음');
-addCharWorld(DAKUTEN,[5],'k','가타카나 탁음·반탁음');
-addCharWorld(YOUON,[6],'h','히라가나 요음');
-addCharWorld(YOUON,[6],'k','가타카나 요음');
-chunk(WORDS,[8]).forEach(grp=>{
-  stages.push({id:'w'+(sid++),world:'여행 단어',kind:'word',
-    title:grp[0][0]+' 외 '+(grp.length-1)+'개',
-    items:grp.map(w=>({jp:w[0],ko:w[1]}))});
-});
-(()=>{
-  const byC={};
-  PHRASES.forEach(([c,jp,ko])=>{(byC[c]=byC[c]||[]).push({jp,ko});});
-  Object.entries(byC).forEach(([c,items])=>{
-    stages.push({id:'p'+(sid++),world:'생존 회화',kind:'phrase',title:c,items});
-  });
-})();
-
 const CONFUSE={shi:['tsu'],tsu:['shi'],so:['n'],n:['so'],nu:['me'],me:['nu'],
   wa:['re','ne'],re:['wa','ne'],ne:['re','wa'],ku:['wa'],ru:['ro'],ro:['ru'],
   a:['o'],o:['a'],ha:['ho'],ho:['ha'],ki:['sa'],sa:['ki']};
@@ -531,11 +527,15 @@ const CONFUSE={shi:['tsu'],tsu:['shi'],so:['n'],n:['so'],nu:['me'],me:['nu'],
 const $=id=>document.getElementById(id);
 function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]];}return a;}
 
-/* ---------- 진행 저장 ---------- */
-let GAME=JSON.parse(localStorage.getItem('kana_game')||'{}');
-const saveGame=()=>localStorage.setItem('kana_game',JSON.stringify(GAME));
-function totalStars(){return Object.values(GAME).reduce((n,g)=>n+g.stars,0);}
-function isUnlocked(i){return i===0||(GAME[stages[i-1].id]&&GAME[stages[i-1].id].stars>0);}
+/* ---------- 모드 (진도 저장 없이 매번 랜덤) ---------- */
+const MODES=[
+  {id:'kana',name:'가나 스피드런',desc:'히라가나·가타카나 '+ALLKANA.length*2+'자, 끝없이 랜덤',icon:'⚡',pool:ALLKANA,type:'char'},
+  {id:'word',name:'단어 서바이벌',desc:'여행 필수 단어 '+WORDPOOL.length+'개',icon:'🍙',pool:WORDPOOL,type:'word'},
+  {id:'travel',name:'지명·역명 특급열차',desc:'도쿄·오사카·후쿠오카·삿포로',icon:'🚄',pool:TRAVELPOOL,type:'travel'},
+  {id:'scene',name:'돌발 상황극',desc:'여행 중 상황에서 들려오는 실전 회화',icon:'🎭',pool:PHRASEPOOL,type:'scene'},
+];
+let BEST=JSON.parse(localStorage.getItem('kana_best')||'{}');
+const saveBest=()=>localStorage.setItem('kana_best',JSON.stringify(BEST));
 
 const today=new Date().toISOString().slice(0,10), DAY=864e5;
 let meta=JSON.parse(localStorage.getItem('kana_meta')||'{}');
@@ -544,9 +544,7 @@ if(meta.last!==today){
   meta.streak=cont?(meta.streak||0)+1:1; meta.last=today;
   localStorage.setItem('kana_meta',JSON.stringify(meta));
 }
-
 function refreshHeader(){
-  $('hdr-stars').textContent='★ '+totalStars();
   $('hdr-streak').textContent=meta.streak?('🔥 '+meta.streak+'일'):'';
 }
 
@@ -556,25 +554,20 @@ function showView(v){
 }
 function renderHome(){
   showView('home');
-  let html='',curWorld=null;
-  stages.forEach((s,i)=>{
-    if(s.world!==curWorld){curWorld=s.world;html+='<h3>'+curWorld+'</h3>';}
-    const g=GAME[s.id],unlocked=isUnlocked(i),stars=g?g.stars:0;
-    const icon=s.kind==='char'?s.title[0]:(s.kind==='word'?'🍙':'💬');
-    html+='<div class="stagerow'+(unlocked?'':' locked')+'" data-i="'+i+'">'
-      +'<span class="sicon">'+(unlocked?icon:'🔒')+'</span>'
-      +'<span class="sinfo"><b>'+s.title+'</b><br><small>'+(g?g.best+'점':s.items.length+'개')+'</small></span>'
-      +'<span class="sstars">'+(unlocked?'★'.repeat(stars)+'☆'.repeat(3-stars):'')+'</span>'
-      +'</div>';
-  });
-  $('home-list').innerHTML=html;
-  $('home-list').querySelectorAll('.stagerow:not(.locked)').forEach(row=>{
-    row.onclick=()=>startStage(stages[+row.dataset.i]);
+  $('home-list').innerHTML=MODES.map(m=>
+    '<div class="modecard" data-id="'+m.id+'">'
+    +'<span class="micon">'+m.icon+'</span>'
+    +'<span class="minfo"><b>'+m.name+'</b><br><small>'+m.desc+'</small></span>'
+    +'<span class="mbest">'+(BEST[m.id]?'🏆 '+BEST[m.id]:'')+'</span>'
+    +'</div>'
+  ).join('');
+  $('home-list').querySelectorAll('.modecard').forEach(el=>{
+    el.onclick=()=>startMode(MODES.find(m=>m.id===el.dataset.id));
   });
   refreshHeader();
 }
 
-/* ---------- 스피드 매칭 게임 ---------- */
+/* ---------- 스피드 매칭 게임 (엔드리스, 랜덤 출제) ---------- */
 let play=null;
 function pickDistractors(pool,ans,n){
   const rest=pool.filter(x=>x!==ans&&x.r!==ans.r);
@@ -596,12 +589,20 @@ function feedbackText(item){
   if(ex&&ex!=='—')t+=(t?'<br>':'')+'예) '+ex+' — '+exko;
   return t;
 }
-function startStage(stage){
-  play={stage,type:stage.kind,queue:shuffle(stage.items),lives:3,score:0,combo:0,comboMax:0,wrong:0,cur:null,correctEl:null,timer:null};
-  $('g-title').textContent=stage.title;
+function startMode(mode){
+  play={mode,type:mode.type,lives:3,score:0,combo:0,comboMax:0,cur:null,correctEl:null,timer:null,lastRaw:null};
+  $('g-title').textContent=mode.name;
   showView('game');
   updateGameHUD();
   nextQuestion();
+}
+function drawItem(){
+  const pool=play.mode.pool;
+  if(pool.length===1)return pool[0];
+  let item;
+  do{ item=pool[Math.random()*pool.length|0]; }while(item===play.lastRaw);
+  play.lastRaw=item;
+  return item;
 }
 function updateGameHUD(){
   $('g-hearts').textContent='❤️'.repeat(Math.max(0,play.lives))+'🖤'.repeat(3-Math.max(0,play.lives));
@@ -611,10 +612,11 @@ function updateGameHUD(){
 }
 function nextQuestion(){
   $('g-feedback').innerHTML='';
-  if(!play.queue.length){finishStage(true);return;}
-  const item=play.queue.shift();
-  play.cur=item;play.timeLimit=play.type==='char'?4000:6500;play.qStart=Date.now();
-  renderQuestion(item);
+  const raw=drawItem();
+  play.cur=play.type==='char'?{e:raw,sc:Math.random()<0.5?'h':'k'}:raw;
+  play.timeLimit=play.type==='char'?4000:(play.type==='scene'?7000:6500);
+  play.qStart=Date.now();
+  renderQuestion(play.cur);
   const bar=$('g-timerfill');
   bar.style.transition='none';bar.style.width='100%';
   requestAnimationFrame(()=>{bar.style.transition='width '+play.timeLimit+'ms linear';bar.style.width='0%';});
@@ -638,21 +640,28 @@ function renderQuestion(item){
       b.onclick=()=>{if(qo.dataset.done)return;qo.dataset.done='1';answer(o===e,b);};
       qo.appendChild(b);
     });
-  } else {
-    const pool=play.type==='word'?WORDPOOL:PHRASEPOOL;
-    prompt.className='prompt';
-    prompt.innerHTML=wordHtml(item.jp);
-    speak(item.jp.replace(/[ ・/○]/g,''));
-    play.speakOnAnswer=()=>speak(item.jp.replace(/[ ・/○]/g,''));
-    const opts=shuffle([item,...pickMeaningDistractors(pool,item,3)]);
-    opts.forEach(o=>{
-      const b=document.createElement('button');
-      b.textContent=o.ko;
-      if(o===item)play.correctEl=b;
-      b.onclick=()=>{if(qo.dataset.done)return;qo.dataset.done='1';answer(o===item,b);};
-      qo.appendChild(b);
-    });
+    return;
   }
+  let ctx='';
+  if(play.type==='travel'){
+    ctx='<div class="ctx">🗾 '+item.city+'</div>';
+  } else if(play.type==='scene'){
+    const f=SCENARIO_FLAVOR[item.c]||{emoji:'💬',text:'현지에서 이런 말을 듣습니다.'};
+    ctx='<div class="ctx">'+f.emoji+' '+f.text+'</div>';
+  }
+  prompt.className='prompt';
+  prompt.innerHTML=ctx+wordHtml(item.jp);
+  const cleanJp=item.jp.replace(/[ ・/○]/g,'');
+  speak(cleanJp);
+  play.speakOnAnswer=()=>speak(cleanJp);
+  const opts=shuffle([item,...pickMeaningDistractors(play.mode.pool,item,3)]);
+  opts.forEach(o=>{
+    const b=document.createElement('button');
+    b.textContent=o.ko;
+    if(o===item)play.correctEl=b;
+    b.onclick=()=>{if(qo.dataset.done)return;qo.dataset.done='1';answer(o===item,b);};
+    qo.appendChild(b);
+  });
 }
 function answer(ok,btn){
   clearTimeout(play.timer);
@@ -663,40 +672,37 @@ function answer(ok,btn){
     play.score+=10*mult+(fast?5:0);
     if(btn)btn.classList.add('ok');
   } else {
-    play.lives--;play.combo=0;play.wrong++;
+    play.lives--;play.combo=0;
     if(btn)btn.classList.add('no');
     if(play.correctEl)play.correctEl.classList.add('ok');
-    play.queue.splice(Math.min(play.queue.length,2+Math.floor(Math.random()*3)),0,play.cur);
     $('g-feedback').innerHTML=feedbackText(play.cur);
   }
   if(play.speakOnAnswer)play.speakOnAnswer();
   updateGameHUD();
-  if(play.lives<=0){setTimeout(()=>finishStage(false),900);return;}
-  setTimeout(nextQuestion,ok?550:1600);
+  if(play.lives<=0){setTimeout(endSession,900);return;}
+  setTimeout(nextQuestion,ok?500:1500);
 }
-function finishStage(success){
-  const stars=success?Math.max(1,play.lives):0;
-  const prev=GAME[play.stage.id]||{stars:0,best:0};
-  GAME[play.stage.id]={stars:Math.max(prev.stars,stars),best:Math.max(prev.best,play.score)};
-  saveGame();
-  showResult(success,stars);
+function recordBest(){
+  const id=play.mode.id;
+  if(play.score>(BEST[id]||0)){BEST[id]=play.score;saveBest();}
 }
-function showResult(success,stars){
+function endSession(){
+  recordBest();
   showView('result');
-  $('r-title').textContent=success?'스테이지 클리어!':'다시 도전!';
-  $('r-stars').textContent='★'.repeat(stars)+'☆'.repeat(3-stars);
-  $('r-score').textContent='점수 '+play.score+' · 최대 콤보 '+play.comboMax+'연속';
-  $('r-retry').onclick=()=>startStage(play.stage);
+  $('r-title').textContent='게임 오버';
+  $('r-score').textContent='점수 '+play.score+' · 최고 기록 '+BEST[play.mode.id]+' · 최대 콤보 '+play.comboMax+'연속';
+  $('r-retry').onclick=()=>startMode(play.mode);
   $('r-home').onclick=renderHome;
-  const idx=stages.indexOf(play.stage),next=stages[idx+1];
-  $('r-next').hidden=!(success&&next);
-  if(success&&next)$('r-next').onclick=()=>startStage(next);
   refreshHeader();
 }
-$('g-back').onclick=()=>{clearTimeout(play&&play.timer);renderHome();};
+$('g-back').onclick=()=>{
+  clearTimeout(play&&play.timer);
+  if(play)recordBest();
+  renderHome();
+};
 
 /* ---------- 헤더 ---------- */
-$('reset').onclick=()=>{if(confirm('학습 기록을 모두 지울까요?')){GAME={};saveGame();renderHome();}};
+$('reset').onclick=()=>{if(confirm('최고 기록을 모두 지울까요?')){BEST={};saveBest();renderHome();}};
 $('audio').onclick=()=>{
   audioOn=!audioOn;localStorage.setItem('kana_audio',audioOn?'1':'0');
   $('audio').textContent=audioOn?'🔊':'🔇';

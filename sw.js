@@ -1,4 +1,4 @@
-const C = 'kana-v6';
+const C = 'kana-v7';
 const ASSETS = ['./', './index.html', './manifest.webmanifest', './icon.svg'];
 
 self.addEventListener('install', e =>
