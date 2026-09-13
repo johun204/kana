@@ -43,7 +43,7 @@ section.active{display:block}
 
 /* 게임 화면 */
 .ghud{display:flex;align-items:center;gap:10px;font-size:14px;margin-bottom:6px}
-.ghud .hearts{flex:1}
+.ghud .gprogress{flex:1;font-weight:700;color:#555}
 .ghud .gscore{font-weight:700;color:var(--pp)}
 .ghud .gcombo{color:#e67e22;font-weight:700;min-width:38px;text-align:right}
 .timerwrap{height:6px;background:#e2e4f0;border-radius:3px;overflow:hidden;margin-bottom:14px}
@@ -66,7 +66,12 @@ section.active{display:block}
 
 /* 결과 화면 */
 .rtitle{text-align:center;font-size:19px;font-weight:700;margin-top:10px}
-.rscore{text-align:center;color:#666;font-size:13.5px;margin:10px 0 20px}
+.rscore{text-align:center;color:#666;font-size:13.5px;margin:10px 0 16px}
+#r-recap h4{font-size:12.5px;color:var(--pp);margin:0 0 8px;text-align:center}
+.recapitem{display:flex;align-items:center;gap:8px;background:#f6f6fd;border-radius:10px;
+  padding:8px 12px;margin-bottom:6px;font-size:14px}
+.recapitem .rk{font-family:var(--jp);font-size:22px;color:var(--pp)}
+.recapitem .rko{color:#888;font-size:12.5px;margin-left:auto}
 .rbtns{display:flex;flex-direction:column;gap:10px}
 .rbtns button{padding:13px;border:0;border-radius:10px;font-size:15px;background:var(--pp);color:#fff}
 .rbtns button.ghost{background:#fff;color:var(--pp);border:1px solid #ddd}
@@ -75,6 +80,7 @@ section.active{display:block}
 <body>
 <header>
   <h1 id="hdr-title">가나 게임</h1>
+  <span class="hstat" id="hdr-xp"></span>
   <span class="hstat" id="hdr-streak"></span>
   <button class="iconbtn" id="audio">🔊</button>
   <button class="iconbtn" id="reset">초기화</button>
@@ -83,7 +89,7 @@ section.active{display:block}
 <section id="view-home" class="active">
   <div class="card" style="margin-bottom:12px;font-size:13px;color:#666;line-height:1.6">
     모드를 골라 바로 시작하세요. 진행은 저장하지 않고 <b style="color:var(--pp)">매번 랜덤</b>으로 나와요.
-    하트 3개, 시간 안에 정답을 맞혀 콤보와 점수를 쌓아보세요.
+    10문제 한 라운드, 시간 안에 정답을 맞혀 콤보를 쌓고 등급(S~D)을 받아보세요.
   </div>
   <div class="modelist" id="home-list"></div>
 </section>
@@ -95,7 +101,7 @@ section.active{display:block}
       <b id="g-title" style="font-size:13px;color:#666"></b>
     </div>
     <div class="ghud">
-      <span class="hearts" id="g-hearts"></span>
+      <span class="gprogress" id="g-progress"></span>
       <span class="gcombo" id="g-combo"></span>
       <span class="gscore" id="g-score">0</span>
     </div>
@@ -110,6 +116,7 @@ section.active{display:block}
   <div class="card">
     <div class="rtitle" id="r-title"></div>
     <div class="rscore" id="r-score"></div>
+    <div id="r-recap"></div>
     <div class="rbtns">
       <button id="r-retry">다시 도전</button>
       <button class="ghost" id="r-home">모드 선택</button>
@@ -438,40 +445,9 @@ const PHRASES=`
 숫자·돈|げんきん で はらいます|현금으로 낼게요
 `.trim().split('\n').map(l=>l.split('|'));
 
-// 일본 주요 여행지 지명·역명 — 도시|일본어(가나)|뜻
-const TRAVEL=`
-도쿄|とうきょう|도쿄역
-도쿄|しんじゅく|신주쿠
-도쿄|しぶや|시부야
-도쿄|あさくさ|아사쿠사
-도쿄|うえの|우에노
-도쿄|いけぶくろ|이케부쿠로
-도쿄|はらじゅく|하라주쿠
-도쿄|ぎんざ|긴자
-도쿄|あきはばら|아키하바라
-도쿄|スカイツリー|스카이트리
-오사카|おおさか|오사카역
-오사카|なんば|난바
-오사카|しんさいばし|신사이바시
-오사카|うめだ|우메다
-오사카|どうとんぼり|도톤보리
-오사카|てんのうじ|텐노지
-오사카|ユニバーサル|유니버설스튜디오
-후쿠오카|はかた|하카타
-후쿠오카|てんじん|텐진
-후쿠오카|ふくおか|후쿠오카
-후쿠오카|やたい|야타이(포장마차)
-후쿠오카|だざいふ|다자이후
-삿포로|さっぽろ|삿포로
-삿포로|すすきの|스스키노
-삿포로|おたる|오타루
-삿포로|はこだて|하코다테
-`.trim().split('\n').map(l=>l.split('|'));
-
 const ALLKANA=[].concat(GOJUON,DAKUTEN,YOUON);
 const WORDPOOL=WORDS.map(w=>({jp:w[0],ko:w[1]}));
 const PHRASEPOOL=PHRASES.map(([c,jp,ko])=>({c,jp,ko}));
-const TRAVELPOOL=TRAVEL.map(([city,jp,ko])=>({city,jp,ko}));
 const SCENARIO_FLAVOR={
   '인사·기본':{emoji:'🙋',text:'상대방이 먼저 말을 건넵니다.'},
   '이동·길':{emoji:'🧭',text:'지나가는 사람에게 길을 물어봅니다.'},
@@ -530,15 +506,25 @@ const CONFUSE={shi:['tsu'],tsu:['shi'],so:['n'],n:['so'],nu:['me'],me:['nu'],
 const $=id=>document.getElementById(id);
 function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]];}return a;}
 
-/* ---------- 모드 (진도 저장 없이 매번 랜덤) ---------- */
+/* ---------- 모드 (진도 저장 없이 매번 랜덤, 10문제 라운드+등급) ---------- */
+const ROUND_LEN=10;
+const GRADE_ORDER=['D','C','B','A','S'];
+function gradeOf(correct){
+  if(correct>=10)return'S';
+  if(correct>=8)return'A';
+  if(correct>=6)return'B';
+  if(correct>=4)return'C';
+  return'D';
+}
 const MODES=[
-  {id:'kana',name:'가나 스피드런',desc:'히라가나·가타카나 '+ALLKANA.length*2+'자, 끝없이 랜덤',icon:'⚡',pool:ALLKANA,type:'char'},
-  {id:'word',name:'단어 서바이벌',desc:'여행 필수 단어 '+WORDPOOL.length+'개',icon:'🍙',pool:WORDPOOL,type:'word'},
-  {id:'travel',name:'지명·역명 특급열차',desc:'도쿄·오사카·후쿠오카·삿포로',icon:'🚄',pool:TRAVELPOOL,type:'travel'},
+  {id:'kana',name:'가나 스피드런',desc:'히라가나·가타카나 '+ALLKANA.length*2+'자, 10문제 라운드',icon:'⚡',pool:ALLKANA,type:'char'},
+  {id:'word',name:'단어 라운드',desc:'여행 필수 단어 '+WORDPOOL.length+'개',icon:'🍙',pool:WORDPOOL,type:'word'},
+  {id:'dictate',name:'받아쓰기',desc:'듣고 정확한 가나 표기 고르기',icon:'🎧',pool:WORDPOOL,type:'dictate'},
   {id:'scene',name:'돌발 상황극',desc:'여행 중 상황에서 들려오는 실전 회화',icon:'🎭',pool:PHRASEPOOL,type:'scene'},
 ];
 let BEST=JSON.parse(localStorage.getItem('kana_best')||'{}');
 const saveBest=()=>localStorage.setItem('kana_best',JSON.stringify(BEST));
+let XP=+localStorage.getItem('kana_xp')||0;
 
 const today=new Date().toISOString().slice(0,10), DAY=864e5;
 let meta=JSON.parse(localStorage.getItem('kana_meta')||'{}');
@@ -549,6 +535,7 @@ if(meta.last!==today){
 }
 function refreshHeader(){
   $('hdr-streak').textContent=meta.streak?('🔥 '+meta.streak+'일'):'';
+  $('hdr-xp').textContent='⭐ '+XP;
 }
 
 /* ---------- 홈 화면 ---------- */
@@ -561,7 +548,7 @@ function renderHome(){
     '<div class="modecard" data-id="'+m.id+'">'
     +'<span class="micon">'+m.icon+'</span>'
     +'<span class="minfo"><b>'+m.name+'</b><br><small>'+m.desc+'</small></span>'
-    +'<span class="mbest">'+(BEST[m.id]?'🏆 '+BEST[m.id]:'')+'</span>'
+    +'<span class="mbest">'+(BEST[m.id]?('🏆 '+BEST[m.id].grade):'')+'</span>'
     +'</div>'
   ).join('');
   $('home-list').querySelectorAll('.modecard').forEach(el=>{
@@ -570,7 +557,7 @@ function renderHome(){
   refreshHeader();
 }
 
-/* ---------- 스피드 매칭 게임 (엔드리스, 랜덤 출제) ---------- */
+/* ---------- 스피드 매칭 게임 (10문제 라운드, 랜덤 출제) ---------- */
 let play=null;
 function pickDistractors(pool,ans,n){
   const rest=pool.filter(x=>x!==ans&&x.r!==ans.r);
@@ -581,22 +568,27 @@ function pickDistractors(pool,ans,n){
 function pickMeaningDistractors(pool,ans,n){
   return shuffle(pool.filter(x=>x.ko!==ans.ko)).slice(0,n);
 }
+function pickSpellingDistractors(pool,ans,n){
+  return shuffle(pool.filter(x=>x.jp!==ans.jp)).slice(0,n);
+}
 function feedbackText(item){
-  if(play.type!=='char')return '';
-  const {e,sc}=item;
-  const mnemonic=sc==='h'?e.hm:e.km;
-  const ex=sc==='h'?e.he:(e.ke&&e.ke!=='—'?e.ke:e.he);
-  const exko=sc==='h'?e.heko:(e.ke&&e.ke!=='—'?e.keko:e.heko);
-  let t='';
-  if(mnemonic)t+='💡 '+mnemonic;
-  if(ex&&ex!=='—')t+=(t?'<br>':'')+'예) '+ex+' — '+exko;
-  return t;
+  if(play.type==='char'){
+    const {e,sc}=item;
+    const mnemonic=sc==='h'?e.hm:e.km;
+    const ex=sc==='h'?e.he:(e.ke&&e.ke!=='—'?e.ke:e.he);
+    const exko=sc==='h'?e.heko:(e.ke&&e.ke!=='—'?e.keko:e.heko);
+    let t='';
+    if(mnemonic)t+='💡 '+mnemonic;
+    if(ex&&ex!=='—')t+=(t?'<br>':'')+'예) '+ex+' — '+exko;
+    return t;
+  }
+  if(play.type==='dictate')return '정답 표기: '+wordHtml(item.jp);
+  return '';
 }
 function startMode(mode){
-  play={mode,type:mode.type,lives:3,score:0,combo:0,comboMax:0,cur:null,correctEl:null,timer:null,lastRaw:null};
+  play={mode,type:mode.type,idx:0,correct:0,score:0,combo:0,comboMax:0,cur:null,correctEl:null,timer:null,lastRaw:null,misses:[]};
   $('g-title').textContent=mode.name;
   showView('game');
-  updateGameHUD();
   nextQuestion();
 }
 function drawItem(){
@@ -608,18 +600,20 @@ function drawItem(){
   return item;
 }
 function updateGameHUD(){
-  $('g-hearts').textContent='❤️'.repeat(Math.max(0,play.lives))+'🖤'.repeat(3-Math.max(0,play.lives));
+  $('g-progress').textContent=Math.min(play.idx+1,ROUND_LEN)+' / '+ROUND_LEN;
   $('g-score').textContent=play.score;
   const mult=Math.min(3,1+Math.floor((play.combo-1)/3));
   $('g-combo').textContent=play.combo>=3?('🔥x'+mult):'';
 }
 function nextQuestion(){
+  if(play.idx>=ROUND_LEN){finishRound();return;}
   $('g-feedback').innerHTML='';
   const raw=drawItem();
   play.cur=play.type==='char'?{e:raw,sc:Math.random()<0.5?'h':'k'}:raw;
-  play.timeLimit=play.type==='char'?4000:(play.type==='scene'?7000:6500);
+  play.timeLimit=play.type==='char'?4000:(play.type==='scene'?7000:6000);
   play.qStart=Date.now();
   renderQuestion(play.cur);
+  updateGameHUD();
   const bar=$('g-timerfill');
   bar.classList.remove('frozen');
   bar.style.transition='none';
@@ -649,10 +643,25 @@ function renderQuestion(item){
     });
     return;
   }
+  if(play.type==='dictate'){
+    prompt.className='prompt reading';
+    prompt.innerHTML='🎧 '+item.ko;
+    const cleanJp=item.jp.replace(/[ ・/○]/g,'');
+    speak(cleanJp);
+    play.speakOnAnswer=()=>speak(cleanJp);
+    qo.classList.add('jpopts');
+    const opts=shuffle([item,...pickSpellingDistractors(play.mode.pool,item,3)]);
+    opts.forEach(o=>{
+      const b=document.createElement('button');
+      b.textContent=o.jp;
+      if(o===item)play.correctEl=b;
+      b.onclick=()=>answer(o===item,b);
+      qo.appendChild(b);
+    });
+    return;
+  }
   let ctx='';
-  if(play.type==='travel'){
-    ctx='<div class="ctx">🗾 '+item.city+'</div>';
-  } else if(play.type==='scene'){
+  if(play.type==='scene'){
     const f=SCENARIO_FLAVOR[item.c]||{emoji:'💬',text:'현지에서 이런 말을 듣습니다.'};
     ctx='<div class="ctx">'+f.emoji+' '+f.text+'</div>';
   }
@@ -686,34 +695,53 @@ function answer(ok,btn){
     const mult=Math.min(3,1+Math.floor((play.combo-1)/3));
     const fast=(Date.now()-play.qStart)<play.timeLimit*0.5;
     play.score+=10*mult+(fast?5:0);
+    play.correct++;
+    XP++;localStorage.setItem('kana_xp',XP);
     if(btn)btn.classList.add('ok');
   } else {
-    play.lives--;play.combo=0;
+    play.combo=0;
+    play.misses.push(play.cur);
     if(btn)btn.classList.add('no');
     if(play.correctEl)play.correctEl.classList.add('ok');
     $('g-feedback').innerHTML=feedbackText(play.cur);
   }
   if(play.speakOnAnswer)play.speakOnAnswer();
+  play.idx++;
   updateGameHUD();
-  if(play.lives<=0){setTimeout(endSession,900);return;}
   setTimeout(nextQuestion,ok?500:1500);
 }
-function recordBest(){
-  const id=play.mode.id;
-  if(play.score>(BEST[id]||0)){BEST[id]=play.score;saveBest();}
+function recapHtml(item){
+  if(play.type==='char'){
+    const {e,sc}=item;
+    return '<div class="recapitem"><b class="rk">'+(sc==='h'?e.h:e.k)+'</b> '+e.ko+' ('+e.r+')</div>';
+  }
+  return '<div class="recapitem">'+wordHtml(item.jp)+'<span class="rko">'+item.ko+'</span></div>';
 }
-function endSession(){
-  recordBest();
+function recordBest(g){
+  const id=play.mode.id;
+  const prev=BEST[id]||{score:0,grade:'D'};
+  BEST[id]={
+    score:Math.max(prev.score,play.score),
+    grade:GRADE_ORDER.indexOf(g)>GRADE_ORDER.indexOf(prev.grade)?g:prev.grade
+  };
+  saveBest();
+}
+function finishRound(){
+  const g=gradeOf(play.correct);
+  recordBest(g);
   showView('result');
-  $('r-title').textContent='게임 오버';
-  $('r-score').textContent='점수 '+play.score+' · 최고 기록 '+BEST[play.mode.id]+' · 최대 콤보 '+play.comboMax+'연속';
+  $('r-title').textContent=g+' 등급 · '+play.correct+' / '+ROUND_LEN+' 정답';
+  const best=BEST[play.mode.id];
+  $('r-score').textContent='점수 '+play.score+' · 최고 등급 '+best.grade+'('+best.score+'점) · 최대 콤보 '+play.comboMax+'연속';
+  $('r-recap').innerHTML=play.misses.length
+    ?'<h4>다시 보기</h4>'+play.misses.map(recapHtml).join('')
+    :'';
   $('r-retry').onclick=()=>startMode(play.mode);
   $('r-home').onclick=renderHome;
   refreshHeader();
 }
 $('g-back').onclick=()=>{
   clearTimeout(play&&play.timer);
-  if(play)recordBest();
   renderHome();
 };
 
